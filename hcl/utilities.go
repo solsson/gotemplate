@@ -96,7 +96,7 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 
 	case []interface{}:
 		results := make([]string, len(value))
-		if fullHcl && isArrayOfMap(value) {
+		if fullHcl && hclDictHelper.AsList(value).IsArrayOfSingleMap() {
 			for i, element := range value {
 				element := element.(map[string]interface{})
 				for key := range element {
@@ -129,7 +129,7 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 		}
 
 	case map[string]interface{}:
-		if key := singleMap(value); fullHcl && key != "" {
+		if key := hclDictHelper.AsDictionary(value).SingleKey(); fullHcl && key != "" {
 			var element string
 			if element, err = marshalHCL(value[key], fullHcl, false, "", indent); err != nil {
 				return
@@ -216,30 +216,6 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 		err = fmt.Errorf("marshalHCL Unknown type %[1]T %[1]v", value)
 	}
 	return
-}
-
-func isArrayOfMap(array []interface{}) bool {
-	if len(array) == 0 {
-		return false
-	}
-	for _, item := range array {
-		if item, isMap := item.([]map[string]interface{}); !isMap || len(item) != 1 {
-			return false
-		}
-	}
-	return true
-}
-
-func singleMap(m map[string]interface{}) string {
-	if len(m) != 1 {
-		return ""
-	}
-	for k := range m {
-		if _, isMap := m[k].(map[string]interface{}); isMap {
-			return k
-		}
-	}
-	return ""
 }
 
 var identifierRegex = regexp.MustCompile(`^[A-za-z][\w-]*$`)

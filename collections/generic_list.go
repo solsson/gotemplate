@@ -20,6 +20,7 @@ type IGenericList interface {
 	GetHelpers() (IDictionaryHelper, IListHelper)           // Returns the helpers implementation associated with the current type.
 	Has(...interface{}) bool                                // Alias for contains
 	Intersect(...interface{}) IGenericList                  // Returns a list that is the result of the intersection of the list and the parameters (removing duplicates).
+	IsArrayOfSingleMap() bool                               // Returns true only if all elements of the list are maps containing a single key.
 	Join(sep interface{}) String                            // Returns the string representation of the list.
 	Last() interface{}                                      // Returns the last element of the list.
 	Len() int                                               // Returns the number of elements in the list.

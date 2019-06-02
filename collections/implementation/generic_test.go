@@ -6,9 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/coveo/gotemplate/v3/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 var strFixture = baseList(baseListHelper.NewStringList(strings.Split("Hello World, I'm Foo Bar!", " ")...).AsArray())
@@ -795,19 +794,28 @@ func Test_dict_Flush(t *testing.T) {
 func Test_dict_Keys(t *testing.T) {
 	t.Parallel()
 
+	subDict := baseDict{"map": baseDict{"sub": baseDict{"a": 1, "b": 2}}}
+
 	tests := []struct {
-		name string
-		d    baseDict
-		want baseIList
+		name      string
+		recursive bool
+		d         baseIDict
+		want      str
 	}{
-		{"Empty", nil, baseList{}},
-		{"Map", dictFixture, baseList{str("float"), str("int"), str("list"), str("listInt"), str("map"), str("mapInt"), str("string")}},
+		{"Empty", false, baseDict{}, ""},
+		{"Map", false, dictFixture, "float int list listInt map mapInt string"},
+		{"Map recursive", true, dictFixture, "float int list listInt map map.sub1 map.sub2 mapInt mapInt.1 mapInt.2 string"},
+		{"Map deep recursive", true, dictFixture.Clone().Merge(subDict), "float int list listInt map map.sub map.sub.a map.sub.b map.sub1 map.sub2 mapInt mapInt.1 mapInt.2 string"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.d.GetKeys(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("baseDict.GetKeys():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
+			f := tt.d.GetKeys
+			if tt.recursive {
+				f = tt.d.GetAllKeys
 			}
+			got := f()
+			want := baseListHelper.AsList(tt.want.Fields())
+			assert.Equal(t, want, got)
 		})
 	}
 }

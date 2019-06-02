@@ -28,6 +28,7 @@ func (l yamlList) Get(indexes ...int) interface{} {
 	return yamlListHelper.GetIndexes(l, indexes...)
 }
 func (l yamlList) Has(values ...interface{}) bool    { return l.Contains(values...) }
+func (l yamlList) IsArrayOfSingleMap() bool          { return yamlListHelper.IsArrayOfSingleMap(l) }
 func (l yamlList) Join(sep interface{}) str          { return l.StringArray().Join(sep) }
 func (l yamlList) Last() interface{}                 { return yamlListHelper.GetIndexes(l, len(l)-1) }
 func (l yamlList) Len() int                          { return len(l) }
@@ -90,14 +91,16 @@ func (d yamlDict) Create(args ...int) yamlIDict        { return yamlListHelper.C
 func (d yamlDict) CreateList(args ...int) yamlIList    { return yamlHelper.CreateList(args...) }
 func (d yamlDict) Flush(keys ...interface{}) yamlIDict { return yamlDictHelper.Flush(d, keys) }
 func (d yamlDict) Get(keys ...interface{}) interface{} { return yamlDictHelper.Get(d, keys) }
-func (d yamlDict) GetKeys() yamlIList                  { return yamlDictHelper.GetKeys(d) }
+func (d yamlDict) GetKeys() yamlIList                  { return yamlDictHelper.GetKeys(d, false) }
+func (d yamlDict) GetAllKeys() yamlIList               { return yamlDictHelper.GetKeys(d, true) }
 func (d yamlDict) GetValues() yamlIList                { return yamlDictHelper.GetValues(d) }
 func (d yamlDict) Has(keys ...interface{}) bool        { return yamlDictHelper.Has(d, keys) }
-func (d yamlDict) KeysAsString() strArray              { return yamlDictHelper.KeysAsString(d) }
+func (d yamlDict) KeysAsString() strArray              { return yamlDictHelper.KeysAsString(d, false) }
 func (d yamlDict) Len() int                            { return len(d) }
 func (d yamlDict) Native() interface{}                 { return collections.ToNativeRepresentation(d) }
 func (d yamlDict) Pop(keys ...interface{}) interface{} { return yamlDictHelper.Pop(d, keys) }
 func (d yamlDict) Set(key, v interface{}) yamlIDict    { return yamlDictHelper.Set(d, key, v) }
+func (d yamlDict) SingleKey() string                   { return yamlDictHelper.SingleKey(d) }
 func (d yamlDict) Transpose() yamlIDict                { return yamlDictHelper.Transpose(d) }
 func (d yamlDict) TypeName() str                       { return "Yaml" }
 

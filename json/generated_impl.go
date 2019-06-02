@@ -28,6 +28,7 @@ func (l jsonList) Get(indexes ...int) interface{} {
 	return jsonListHelper.GetIndexes(l, indexes...)
 }
 func (l jsonList) Has(values ...interface{}) bool    { return l.Contains(values...) }
+func (l jsonList) IsArrayOfSingleMap() bool          { return jsonListHelper.IsArrayOfSingleMap(l) }
 func (l jsonList) Join(sep interface{}) str          { return l.StringArray().Join(sep) }
 func (l jsonList) Last() interface{}                 { return jsonListHelper.GetIndexes(l, len(l)-1) }
 func (l jsonList) Len() int                          { return len(l) }
@@ -90,14 +91,16 @@ func (d jsonDict) Create(args ...int) jsonIDict        { return jsonListHelper.C
 func (d jsonDict) CreateList(args ...int) jsonIList    { return jsonHelper.CreateList(args...) }
 func (d jsonDict) Flush(keys ...interface{}) jsonIDict { return jsonDictHelper.Flush(d, keys) }
 func (d jsonDict) Get(keys ...interface{}) interface{} { return jsonDictHelper.Get(d, keys) }
-func (d jsonDict) GetKeys() jsonIList                  { return jsonDictHelper.GetKeys(d) }
+func (d jsonDict) GetKeys() jsonIList                  { return jsonDictHelper.GetKeys(d, false) }
+func (d jsonDict) GetAllKeys() jsonIList               { return jsonDictHelper.GetKeys(d, true) }
 func (d jsonDict) GetValues() jsonIList                { return jsonDictHelper.GetValues(d) }
 func (d jsonDict) Has(keys ...interface{}) bool        { return jsonDictHelper.Has(d, keys) }
-func (d jsonDict) KeysAsString() strArray              { return jsonDictHelper.KeysAsString(d) }
+func (d jsonDict) KeysAsString() strArray              { return jsonDictHelper.KeysAsString(d, false) }
 func (d jsonDict) Len() int                            { return len(d) }
 func (d jsonDict) Native() interface{}                 { return collections.ToNativeRepresentation(d) }
 func (d jsonDict) Pop(keys ...interface{}) interface{} { return jsonDictHelper.Pop(d, keys) }
 func (d jsonDict) Set(key, v interface{}) jsonIDict    { return jsonDictHelper.Set(d, key, v) }
+func (d jsonDict) SingleKey() string                   { return jsonDictHelper.SingleKey(d) }
 func (d jsonDict) Transpose() jsonIDict                { return jsonDictHelper.Transpose(d) }
 func (d jsonDict) TypeName() str                       { return "Json" }
 

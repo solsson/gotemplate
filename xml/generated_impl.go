@@ -28,6 +28,7 @@ func (l xmlList) Get(indexes ...int) interface{} {
 	return xmlListHelper.GetIndexes(l, indexes...)
 }
 func (l xmlList) Has(values ...interface{}) bool   { return l.Contains(values...) }
+func (l xmlList) IsArrayOfSingleMap() bool         { return xmlListHelper.IsArrayOfSingleMap(l) }
 func (l xmlList) Join(sep interface{}) str         { return l.StringArray().Join(sep) }
 func (l xmlList) Last() interface{}                { return xmlListHelper.GetIndexes(l, len(l)-1) }
 func (l xmlList) Len() int                         { return len(l) }
@@ -90,14 +91,16 @@ func (d xmlDict) Create(args ...int) xmlIDict         { return xmlListHelper.Cre
 func (d xmlDict) CreateList(args ...int) xmlIList     { return xmlHelper.CreateList(args...) }
 func (d xmlDict) Flush(keys ...interface{}) xmlIDict  { return xmlDictHelper.Flush(d, keys) }
 func (d xmlDict) Get(keys ...interface{}) interface{} { return xmlDictHelper.Get(d, keys) }
-func (d xmlDict) GetKeys() xmlIList                   { return xmlDictHelper.GetKeys(d) }
+func (d xmlDict) GetKeys() xmlIList                   { return xmlDictHelper.GetKeys(d, false) }
+func (d xmlDict) GetAllKeys() xmlIList                { return xmlDictHelper.GetKeys(d, true) }
 func (d xmlDict) GetValues() xmlIList                 { return xmlDictHelper.GetValues(d) }
 func (d xmlDict) Has(keys ...interface{}) bool        { return xmlDictHelper.Has(d, keys) }
-func (d xmlDict) KeysAsString() strArray              { return xmlDictHelper.KeysAsString(d) }
+func (d xmlDict) KeysAsString() strArray              { return xmlDictHelper.KeysAsString(d, false) }
 func (d xmlDict) Len() int                            { return len(d) }
 func (d xmlDict) Native() interface{}                 { return collections.ToNativeRepresentation(d) }
 func (d xmlDict) Pop(keys ...interface{}) interface{} { return xmlDictHelper.Pop(d, keys) }
 func (d xmlDict) Set(key, v interface{}) xmlIDict     { return xmlDictHelper.Set(d, key, v) }
+func (d xmlDict) SingleKey() string                   { return xmlDictHelper.SingleKey(d) }
 func (d xmlDict) Transpose() xmlIDict                 { return xmlDictHelper.Transpose(d) }
 func (d xmlDict) TypeName() str                       { return "Xml" }
 

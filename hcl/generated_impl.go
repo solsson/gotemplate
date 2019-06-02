@@ -28,6 +28,7 @@ func (l hclList) Get(indexes ...int) interface{} {
 	return hclListHelper.GetIndexes(l, indexes...)
 }
 func (l hclList) Has(values ...interface{}) bool   { return l.Contains(values...) }
+func (l hclList) IsArrayOfSingleMap() bool         { return hclListHelper.IsArrayOfSingleMap(l) }
 func (l hclList) Join(sep interface{}) str         { return l.StringArray().Join(sep) }
 func (l hclList) Last() interface{}                { return hclListHelper.GetIndexes(l, len(l)-1) }
 func (l hclList) Len() int                         { return len(l) }
@@ -90,14 +91,16 @@ func (d hclDict) Create(args ...int) hclIDict         { return hclListHelper.Cre
 func (d hclDict) CreateList(args ...int) hclIList     { return hclHelper.CreateList(args...) }
 func (d hclDict) Flush(keys ...interface{}) hclIDict  { return hclDictHelper.Flush(d, keys) }
 func (d hclDict) Get(keys ...interface{}) interface{} { return hclDictHelper.Get(d, keys) }
-func (d hclDict) GetKeys() hclIList                   { return hclDictHelper.GetKeys(d) }
+func (d hclDict) GetKeys() hclIList                   { return hclDictHelper.GetKeys(d, false) }
+func (d hclDict) GetAllKeys() hclIList                { return hclDictHelper.GetKeys(d, true) }
 func (d hclDict) GetValues() hclIList                 { return hclDictHelper.GetValues(d) }
 func (d hclDict) Has(keys ...interface{}) bool        { return hclDictHelper.Has(d, keys) }
-func (d hclDict) KeysAsString() strArray              { return hclDictHelper.KeysAsString(d) }
+func (d hclDict) KeysAsString() strArray              { return hclDictHelper.KeysAsString(d, false) }
 func (d hclDict) Len() int                            { return len(d) }
 func (d hclDict) Native() interface{}                 { return collections.ToNativeRepresentation(d) }
 func (d hclDict) Pop(keys ...interface{}) interface{} { return hclDictHelper.Pop(d, keys) }
 func (d hclDict) Set(key, v interface{}) hclIDict     { return hclDictHelper.Set(d, key, v) }
+func (d hclDict) SingleKey() string                   { return hclDictHelper.SingleKey(d) }
 func (d hclDict) Transpose() hclIDict                 { return hclDictHelper.Transpose(d) }
 func (d hclDict) TypeName() str                       { return "Hcl" }
 

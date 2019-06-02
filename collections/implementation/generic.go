@@ -20,6 +20,7 @@ func (l baseList) CreateDict(args ...int) baseIDict    { return baseListHelper.C
 func (l baseList) First() interface{}                  { return baseListHelper.GetIndexes(l, 0) }
 func (l baseList) Get(indexes ...int) interface{}      { return baseListHelper.GetIndexes(l, indexes...) }
 func (l baseList) Has(values ...interface{}) bool      { return l.Contains(values...) }
+func (l baseList) IsArrayOfSingleMap() bool            { return baseListHelper.IsArrayOfSingleMap(l) }
 func (l baseList) Join(sep interface{}) str            { return l.StringArray().Join(sep) }
 func (l baseList) Last() interface{}                   { return baseListHelper.GetIndexes(l, len(l)-1) }
 func (l baseList) Len() int                            { return len(l) }
@@ -82,14 +83,16 @@ func (d baseDict) Create(args ...int) baseIDict        { return baseListHelper.C
 func (d baseDict) CreateList(args ...int) baseIList    { return baseHelper.CreateList(args...) }
 func (d baseDict) Flush(keys ...interface{}) baseIDict { return baseDictHelper.Flush(d, keys) }
 func (d baseDict) Get(keys ...interface{}) interface{} { return baseDictHelper.Get(d, keys) }
-func (d baseDict) GetKeys() baseIList                  { return baseDictHelper.GetKeys(d) }
+func (d baseDict) GetKeys() baseIList                  { return baseDictHelper.GetKeys(d, false) }
+func (d baseDict) GetAllKeys() baseIList               { return baseDictHelper.GetKeys(d, true) }
 func (d baseDict) GetValues() baseIList                { return baseDictHelper.GetValues(d) }
 func (d baseDict) Has(keys ...interface{}) bool        { return baseDictHelper.Has(d, keys) }
-func (d baseDict) KeysAsString() strArray              { return baseDictHelper.KeysAsString(d) }
+func (d baseDict) KeysAsString() strArray              { return baseDictHelper.KeysAsString(d, false) }
 func (d baseDict) Len() int                            { return len(d) }
 func (d baseDict) Native() interface{}                 { return collections.ToNativeRepresentation(d) }
 func (d baseDict) Pop(keys ...interface{}) interface{} { return baseDictHelper.Pop(d, keys) }
 func (d baseDict) Set(key, v interface{}) baseIDict    { return baseDictHelper.Set(d, key, v) }
+func (d baseDict) SingleKey() string                   { return baseDictHelper.SingleKey(d) }
 func (d baseDict) Transpose() baseIDict                { return baseDictHelper.Transpose(d) }
 func (d baseDict) TypeName() str                       { return "base" }
 

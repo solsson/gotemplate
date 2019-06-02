@@ -199,3 +199,16 @@ func (lh ListHelper) Contains(list baseIList, values ...interface{}) bool {
 
 	return len(source) > 0
 }
+
+// IsArrayOfSingleMap returns true only if all elements of the list are maps containing a single key.
+func (lh ListHelper) IsArrayOfSingleMap(list baseIList) bool {
+	if list == nil || list.Len() == 0 {
+		return false
+	}
+	for _, item := range list.AsArray() {
+		if item, _ := lh.TryAsDictionary(item); item == nil || item.Len() != 1 {
+			return false
+		}
+	}
+	return true
+}

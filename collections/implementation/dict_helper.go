@@ -96,9 +96,9 @@ func (dh DictHelper) Has(dict baseIDict, keys []interface{}) bool {
 }
 
 // GetKeys returns the keys in the dictionary in alphabetical order.
-func (dh DictHelper) GetKeys(dict baseIDict) baseIList {
-	keys := dict.KeysAsString()
-	result := dh.CreateList(dict.Len())
+func (dh DictHelper) GetKeys(dict baseIDict, recursive bool) baseIList {
+	keys := dh.KeysAsString(dict, recursive)
+	result := dh.CreateList(len(keys))
 
 	for i := range keys {
 		result.Set(i, keys[i])
@@ -106,11 +106,33 @@ func (dh DictHelper) GetKeys(dict baseIDict) baseIList {
 	return result
 }
 
+// SingleKey returns the key if there is only one key, otherwise, returns empty string.
+func (dh DictHelper) SingleKey(dict baseIDict) string {
+	if dict == nil || dict.Len() != 1 {
+		return ""
+	}
+	key := dh.KeysAsString(dict, false)[0].Str()
+	if _, err := dh.TryAsDictionary(dict.Get(key)); err == nil {
+		return key
+	}
+	return ""
+}
+
 // KeysAsString returns the keys in the dictionary in alphabetical order.
-func (dh DictHelper) KeysAsString(dict baseIDict) collections.StringArray {
+func (dh DictHelper) KeysAsString(dict baseIDict, recursive bool) collections.StringArray {
 	keys := make(collections.StringArray, 0, dict.Len())
 	for key := range dict.AsMap() {
 		keys = append(keys, str(key))
+		if recursive {
+			object := dict.Get(key)
+			if subDict, _ := dh.TryAsDictionary(object); subDict != nil {
+				for _, sub := range dh.KeysAsString(subDict, true) {
+					keys = append(keys, str(fmt.Sprintf("%s.%s", key, sub)))
+				}
+			} else if list, _ := dh.TryAsList(object); list != nil {
+
+			}
+		}
 	}
 	return keys.Sorted()
 }
@@ -161,8 +183,8 @@ func (dh DictHelper) deepMerge(target baseIDict, source baseIDict, mode mergeMod
 	for key := range sourceMap {
 		sourceValue, sourceHasKey := sourceMap[key]
 		targetValue, targetHasKey := targetMap[key]
-		targetValueDict, _ := collections.TryAsDictionary(targetValue)
-		sourceValueDict, _ := collections.TryAsDictionary(sourceValue)
+		targetValueDict, _ := dh.TryAsDictionary(targetValue)
+		sourceValueDict, _ := dh.TryAsDictionary(sourceValue)
 
 		if sourceHasKey && !targetHasKey || mode != regularMerge && targetValueDict == nil && !reflect.DeepEqual(targetValue, sourceValue) {
 			result.Set(key, sourceValue)
@@ -222,7 +244,7 @@ func (dh DictHelper) Add(dict baseIDict, key interface{}, value interface{}) bas
 	k := fmt.Sprint(key)
 
 	if current, ok := m[k]; ok {
-		if list, err := collections.TryAsList(current); err == nil {
+		if list, err := dh.TryAsList(current); err == nil {
 			m[k] = list.Append(value)
 		} else {
 			// Convert the current value into a list
@@ -249,7 +271,7 @@ func (dh DictHelper) Transpose(dict baseIDict) baseIDict {
 	result := dh.CreateDictionary()
 	for _, key := range dict.GetKeys().AsArray() {
 		value := dict.Get(key)
-		if list, err := collections.TryAsList(value); err == nil {
+		if list, err := dh.TryAsList(value); err == nil {
 			// If the element is a list, we scan each element
 			for _, value := range list.AsArray() {
 				result.Add(value, key)

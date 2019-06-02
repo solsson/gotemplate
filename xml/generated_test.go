@@ -798,19 +798,28 @@ func Test_dict_Flush(t *testing.T) {
 func Test_dict_Keys(t *testing.T) {
 	t.Parallel()
 
+	subDict := xmlDict{"map": xmlDict{"sub": xmlDict{"a": 1, "b": 2}}}
+
 	tests := []struct {
-		name string
-		d    xmlDict
-		want xmlIList
+		name      string
+		recursive bool
+		d         xmlIDict
+		want      str
 	}{
-		{"Empty", nil, xmlList{}},
-		{"Map", dictFixture, xmlList{str("float"), str("int"), str("list"), str("listInt"), str("map"), str("mapInt"), str("string")}},
+		{"Empty", false, xmlDict{}, ""},
+		{"Map", false, dictFixture, "float int list listInt map mapInt string"},
+		{"Map recursive", true, dictFixture, "float int list listInt map map.sub1 map.sub2 mapInt mapInt.1 mapInt.2 string"},
+		{"Map deep recursive", true, dictFixture.Clone().Merge(subDict), "float int list listInt map map.sub map.sub.a map.sub.b map.sub1 map.sub2 mapInt mapInt.1 mapInt.2 string"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.d.GetKeys(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("XmlDict.GetKeys():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
+			f := tt.d.GetKeys
+			if tt.recursive {
+				f = tt.d.GetAllKeys
 			}
+			got := f()
+			want := xmlListHelper.AsList(tt.want.Fields())
+			assert.Equal(t, want, got)
 		})
 	}
 }
