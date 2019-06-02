@@ -573,8 +573,6 @@ var mapFixture = map[string]interface{}{
 var dictFixture = yamlDict(yamlDictHelper.AsDictionary(mapFixture).AsMap())
 
 func dumpKeys(t *testing.T, d1, d2 yamlIDict) {
-	t.Parallel()
-
 	for key := range d1.AsMap() {
 		v1, v2 := d1.Get(key), d2.Get(key)
 		if reflect.DeepEqual(v1, v2) {
@@ -843,42 +841,176 @@ func Test_dict_Merge(t *testing.T) {
 	adding1 := yamlDict{
 		"int":        1000,
 		"Add1Int":    1,
-		"Add1String": "string",
+		"Add1String": "string1",
 	}
 	adding2 := yamlDict{
-		"Add2Int":    1,
-		"Add2String": "string",
+		"Add2Int":    2,
+		"Add2String": "string2",
 		"map": map[string]interface{}{
-			"sub1":   2,
+			"sub1":   "replaced by 2",
 			"newVal": "NewValue",
 		},
 	}
-	type args struct {
-		yamlDict yamlIDict
-		dicts    []yamlIDict
-	}
+
 	tests := []struct {
-		name string
-		d    yamlDict
-		args args
-		want yamlIDict
+		name          string
+		d             yamlDict
+		dicts         []yamlIDict
+		wantRegular   yamlIDict
+		wantOverwrite yamlIDict
+		wantDiff      yamlIDict
 	}{
-		{"Empty", nil, args{nil, []yamlIDict{}}, yamlDict{}},
-		{"Add map to empty", nil, args{dictFixture, []yamlIDict{}}, dictFixture},
-		{"Add map to same map", dictFixture, args{dictFixture, []yamlIDict{}}, dictFixture},
-		{"Add empty to map", dictFixture, args{nil, []yamlIDict{}}, dictFixture},
-		{"Add new1 to map", dictFixture, args{adding1, []yamlIDict{}}, dictFixture.Clone().Merge(adding1)},
-		{"Add new2 to map", dictFixture, args{adding2, []yamlIDict{}}, dictFixture.Clone().Merge(adding2)},
-		{"Add new1 & new2 to map", dictFixture, args{adding1, []yamlIDict{adding2}}, dictFixture.Clone().Merge(adding1, adding2)},
-		{"Add new1 & new2 to map", dictFixture, args{adding1, []yamlIDict{adding2}}, dictFixture.Clone().Merge(adding1).Merge(adding2)},
+		{"Empty", nil, nil, yamlDict{}, yamlDict{}, yamlDict{}},
+		{"Add map to empty", nil, []yamlIDict{dictFixture}, dictFixture, dictFixture, dictFixture},
+		{"Add map to same map", dictFixture, []yamlIDict{dictFixture}, dictFixture, dictFixture, yamlDict{}},
+		{"Add empty to map", dictFixture, nil, dictFixture, dictFixture, yamlDict{}},
+		{"Add new1 to map", dictFixture, []yamlIDict{adding1},
+			yamlDict{ // Regular mode
+				"Add1Int":    1,
+				"Add1String": "string1",
+				"float":      1.23,
+				"int":        123,
+				"list":       yamlList{1, "two"},
+				"listInt":    yamlList{1, 2, 3},
+				"map": yamlDict{
+					"sub1": 1,
+					"sub2": "two",
+				},
+				"mapInt": yamlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			yamlDict{ // Overwrite mode
+				"Add1Int":    1,
+				"Add1String": "string1",
+				"float":      1.23,
+				"int":        1000,
+				"list":       yamlList{1, "two"},
+				"listInt":    yamlList{1, 2, 3},
+				"map": yamlDict{
+					"sub1": 1,
+					"sub2": "two",
+				},
+				"mapInt": yamlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			yamlDict{ // Diff mode
+				"Add1Int":    1,
+				"Add1String": "string1",
+				"int":        1000,
+			},
+		},
+		{"Add new2 to map", dictFixture, []yamlIDict{adding2},
+			yamlDict{ // Regular mode
+				"Add2Int":    2,
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        123,
+				"list":       yamlList{1, "two"},
+				"listInt":    yamlList{1, 2, 3},
+				"map": yamlDict{
+					"sub1":   1,
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": yamlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			yamlDict{ // Overwrite mode
+				"Add2Int":    2,
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        123,
+				"list":       yamlList{1, "two"},
+				"listInt":    yamlList{1, 2, 3},
+				"map": yamlDict{
+					"sub1":   "replaced by 2",
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": yamlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			yamlDict{ // Diff mode
+				"Add2Int":    2,
+				"Add2String": "string2",
+				"map": yamlDict{
+					"newVal": "NewValue",
+					"sub1":   "replaced by 2",
+				},
+			},
+		},
+		{"Add new1 & new2 to map", dictFixture, []yamlIDict{adding1, adding2},
+			yamlDict{ // Regular mode
+				"Add1Int":    1,
+				"Add2Int":    2,
+				"Add1String": "string1",
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        123,
+				"list":       yamlList{1, "two"},
+				"listInt":    yamlList{1, 2, 3},
+				"map": yamlDict{
+					"sub1":   1,
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": yamlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			yamlDict{ // Overwrite mode
+				"Add1Int":    1,
+				"Add2Int":    2,
+				"Add1String": "string1",
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        1000,
+				"list":       yamlList{1, "two"},
+				"listInt":    yamlList{1, 2, 3},
+				"map": yamlDict{
+					"sub1":   "replaced by 2",
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": yamlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			nil, // Diff mode not tested on multiple sources
+		},
 	}
 	for _, tt := range tests {
-		go t.Run(tt.name, func(t *testing.T) {
-			d := tt.d.Clone()
-			got := d.Merge(tt.args.yamlDict, tt.args.dicts...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("YamlDict.Merge():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-				dumpKeys(t, got, tt.want)
+		t.Run(tt.name, func(t *testing.T) {
+			var first yamlIDict
+			var rest []yamlIDict
+			if len(tt.dicts) >= 1 {
+				first = tt.dicts[0]
+				rest = tt.dicts[1:]
+			}
+			var got yamlIDict
+			got = tt.d.Clone().Merge(first, rest...)
+			assert.Equal(t, tt.wantRegular, got, "Regular merge")
+			got = tt.d.Clone().Overwrite(first, rest...)
+			assert.Equal(t, tt.wantOverwrite, got, "Overwrite merge")
+			if len(rest) == 0 {
+				got = tt.d.Clone().Diff(first)
+				assert.Equal(t, tt.wantDiff, got, "Diff merge")
 			}
 		})
 	}

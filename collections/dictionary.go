@@ -14,6 +14,7 @@ type IDictionary interface {
 	CreateList(...int) IGenericList                          // Instantiates a list of the same type as current dictionary with optional size and capacity.
 	Default(key, defVal interface{}) interface{}             // Returns defVal if dictionary doesn't contain key, otherwise, simply returns entry corresponding to key.
 	Delete(interface{}, ...interface{}) (IDictionary, error) // Removes the entry value associated with key. The entry must exist.
+	Diff(IDictionary) IDictionary                            // Returns a dictionary containing only new and different values coming from the other dictionary.
 	Flush(...interface{}) IDictionary                        // Removes all specified keys from the dictionary. If no key is specified, all keys are removed.
 	Get(...interface{}) interface{}                          // Returns the values associated with key.
 	GetHelpers() (IDictionaryHelper, IListHelper)            // Returns the helpers implementation associated with the current type.
@@ -22,9 +23,10 @@ type IDictionary interface {
 	Has(...interface{}) bool                                 // Returns true if the dictionary object contains all the key.
 	KeysAsString() StringArray                               // Returns the keys in the dictionary in alphabetical order.
 	Len() int                                                // Returns the number of keys in the dictionary.
-	Merge(IDictionary, ...IDictionary) IDictionary           // Merges the other dictionaries into the current dictionary.
+	Merge(IDictionary, ...IDictionary) IDictionary           // Merges the missing values from other dictionaries into the current dictionary.
 	Native() interface{}                                     // Returns the object casted as native go type (applied recursively).
 	Omit(interface{}, ...interface{}) IDictionary            // Returns a distinct copy of the object including all keys except specified ones.
+	Overwrite(IDictionary, ...IDictionary) IDictionary       // Merges the other dictionaries into the current dictionary overwriting values.
 	Pop(...interface{}) interface{}                          // Returns and remove the objects with the specified keys.
 	PrettyPrint() string                                     // Returns the pretty string representation of the dictionary.
 	Set(key, value interface{}) IDictionary                  // Sets key to value in the dictionary.

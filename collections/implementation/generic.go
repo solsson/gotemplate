@@ -105,8 +105,16 @@ func (d baseDict) Delete(key interface{}, otherKeys ...interface{}) (baseIDict, 
 	return baseDictHelper.Delete(d, append([]interface{}{key}, otherKeys...))
 }
 
+func (d baseDict) Diff(dict baseIDict) baseIDict {
+	return baseDictHelper.Diff(d, dict)
+}
+
 func (d baseDict) Merge(dict baseIDict, otherDicts ...baseIDict) baseIDict {
 	return baseDictHelper.Merge(d, append([]baseIDict{dict}, otherDicts...))
+}
+
+func (d baseDict) Overwrite(dict baseIDict, otherDicts ...baseIDict) baseIDict {
+	return baseDictHelper.MergeOverwrite(d, append([]baseIDict{dict}, otherDicts...))
 }
 
 func (d baseDict) Omit(key interface{}, otherKeys ...interface{}) baseIDict {

@@ -113,8 +113,16 @@ func (d hclDict) Delete(key interface{}, otherKeys ...interface{}) (hclIDict, er
 	return hclDictHelper.Delete(d, append([]interface{}{key}, otherKeys...))
 }
 
+func (d hclDict) Diff(dict hclIDict) hclIDict {
+	return hclDictHelper.Diff(d, dict)
+}
+
 func (d hclDict) Merge(dict hclIDict, otherDicts ...hclIDict) hclIDict {
 	return hclDictHelper.Merge(d, append([]hclIDict{dict}, otherDicts...))
+}
+
+func (d hclDict) Overwrite(dict hclIDict, otherDicts ...hclIDict) hclIDict {
+	return hclDictHelper.MergeOverwrite(d, append([]hclIDict{dict}, otherDicts...))
 }
 
 func (d hclDict) Omit(key interface{}, otherKeys ...interface{}) hclIDict {

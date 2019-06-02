@@ -570,8 +570,6 @@ var mapFixture = map[string]interface{}{
 var dictFixture = baseDict(baseDictHelper.AsDictionary(mapFixture).AsMap())
 
 func dumpKeys(t *testing.T, d1, d2 baseIDict) {
-	t.Parallel()
-
 	for key := range d1.AsMap() {
 		v1, v2 := d1.Get(key), d2.Get(key)
 		if reflect.DeepEqual(v1, v2) {
@@ -840,42 +838,176 @@ func Test_dict_Merge(t *testing.T) {
 	adding1 := baseDict{
 		"int":        1000,
 		"Add1Int":    1,
-		"Add1String": "string",
+		"Add1String": "string1",
 	}
 	adding2 := baseDict{
-		"Add2Int":    1,
-		"Add2String": "string",
+		"Add2Int":    2,
+		"Add2String": "string2",
 		"map": map[string]interface{}{
-			"sub1":   2,
+			"sub1":   "replaced by 2",
 			"newVal": "NewValue",
 		},
 	}
-	type args struct {
-		baseDict baseIDict
-		dicts    []baseIDict
-	}
+
 	tests := []struct {
-		name string
-		d    baseDict
-		args args
-		want baseIDict
+		name          string
+		d             baseDict
+		dicts         []baseIDict
+		wantRegular   baseIDict
+		wantOverwrite baseIDict
+		wantDiff      baseIDict
 	}{
-		{"Empty", nil, args{nil, []baseIDict{}}, baseDict{}},
-		{"Add map to empty", nil, args{dictFixture, []baseIDict{}}, dictFixture},
-		{"Add map to same map", dictFixture, args{dictFixture, []baseIDict{}}, dictFixture},
-		{"Add empty to map", dictFixture, args{nil, []baseIDict{}}, dictFixture},
-		{"Add new1 to map", dictFixture, args{adding1, []baseIDict{}}, dictFixture.Clone().Merge(adding1)},
-		{"Add new2 to map", dictFixture, args{adding2, []baseIDict{}}, dictFixture.Clone().Merge(adding2)},
-		{"Add new1 & new2 to map", dictFixture, args{adding1, []baseIDict{adding2}}, dictFixture.Clone().Merge(adding1, adding2)},
-		{"Add new1 & new2 to map", dictFixture, args{adding1, []baseIDict{adding2}}, dictFixture.Clone().Merge(adding1).Merge(adding2)},
+		{"Empty", nil, nil, baseDict{}, baseDict{}, baseDict{}},
+		{"Add map to empty", nil, []baseIDict{dictFixture}, dictFixture, dictFixture, dictFixture},
+		{"Add map to same map", dictFixture, []baseIDict{dictFixture}, dictFixture, dictFixture, baseDict{}},
+		{"Add empty to map", dictFixture, nil, dictFixture, dictFixture, baseDict{}},
+		{"Add new1 to map", dictFixture, []baseIDict{adding1},
+			baseDict{ // Regular mode
+				"Add1Int":    1,
+				"Add1String": "string1",
+				"float":      1.23,
+				"int":        123,
+				"list":       baseList{1, "two"},
+				"listInt":    baseList{1, 2, 3},
+				"map": baseDict{
+					"sub1": 1,
+					"sub2": "two",
+				},
+				"mapInt": baseDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			baseDict{ // Overwrite mode
+				"Add1Int":    1,
+				"Add1String": "string1",
+				"float":      1.23,
+				"int":        1000,
+				"list":       baseList{1, "two"},
+				"listInt":    baseList{1, 2, 3},
+				"map": baseDict{
+					"sub1": 1,
+					"sub2": "two",
+				},
+				"mapInt": baseDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			baseDict{ // Diff mode
+				"Add1Int":    1,
+				"Add1String": "string1",
+				"int":        1000,
+			},
+		},
+		{"Add new2 to map", dictFixture, []baseIDict{adding2},
+			baseDict{ // Regular mode
+				"Add2Int":    2,
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        123,
+				"list":       baseList{1, "two"},
+				"listInt":    baseList{1, 2, 3},
+				"map": baseDict{
+					"sub1":   1,
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": baseDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			baseDict{ // Overwrite mode
+				"Add2Int":    2,
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        123,
+				"list":       baseList{1, "two"},
+				"listInt":    baseList{1, 2, 3},
+				"map": baseDict{
+					"sub1":   "replaced by 2",
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": baseDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			baseDict{ // Diff mode
+				"Add2Int":    2,
+				"Add2String": "string2",
+				"map": baseDict{
+					"newVal": "NewValue",
+					"sub1":   "replaced by 2",
+				},
+			},
+		},
+		{"Add new1 & new2 to map", dictFixture, []baseIDict{adding1, adding2},
+			baseDict{ // Regular mode
+				"Add1Int":    1,
+				"Add2Int":    2,
+				"Add1String": "string1",
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        123,
+				"list":       baseList{1, "two"},
+				"listInt":    baseList{1, 2, 3},
+				"map": baseDict{
+					"sub1":   1,
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": baseDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			baseDict{ // Overwrite mode
+				"Add1Int":    1,
+				"Add2Int":    2,
+				"Add1String": "string1",
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        1000,
+				"list":       baseList{1, "two"},
+				"listInt":    baseList{1, 2, 3},
+				"map": baseDict{
+					"sub1":   "replaced by 2",
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": baseDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			nil, // Diff mode not tested on multiple sources
+		},
 	}
 	for _, tt := range tests {
-		go t.Run(tt.name, func(t *testing.T) {
-			d := tt.d.Clone()
-			got := d.Merge(tt.args.baseDict, tt.args.dicts...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("baseDict.Merge():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-				dumpKeys(t, got, tt.want)
+		t.Run(tt.name, func(t *testing.T) {
+			var first baseIDict
+			var rest []baseIDict
+			if len(tt.dicts) >= 1 {
+				first = tt.dicts[0]
+				rest = tt.dicts[1:]
+			}
+			var got baseIDict
+			got = tt.d.Clone().Merge(first, rest...)
+			assert.Equal(t, tt.wantRegular, got, "Regular merge")
+			got = tt.d.Clone().Overwrite(first, rest...)
+			assert.Equal(t, tt.wantOverwrite, got, "Overwrite merge")
+			if len(rest) == 0 {
+				got = tt.d.Clone().Diff(first)
+				assert.Equal(t, tt.wantDiff, got, "Diff merge")
 			}
 		})
 	}

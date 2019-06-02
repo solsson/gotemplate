@@ -113,8 +113,16 @@ func (d jsonDict) Delete(key interface{}, otherKeys ...interface{}) (jsonIDict, 
 	return jsonDictHelper.Delete(d, append([]interface{}{key}, otherKeys...))
 }
 
+func (d jsonDict) Diff(dict jsonIDict) jsonIDict {
+	return jsonDictHelper.Diff(d, dict)
+}
+
 func (d jsonDict) Merge(dict jsonIDict, otherDicts ...jsonIDict) jsonIDict {
 	return jsonDictHelper.Merge(d, append([]jsonIDict{dict}, otherDicts...))
+}
+
+func (d jsonDict) Overwrite(dict jsonIDict, otherDicts ...jsonIDict) jsonIDict {
+	return jsonDictHelper.MergeOverwrite(d, append([]jsonIDict{dict}, otherDicts...))
 }
 
 func (d jsonDict) Omit(key interface{}, otherKeys ...interface{}) jsonIDict {

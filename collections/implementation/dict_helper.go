@@ -2,6 +2,7 @@ package implementation
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/coveo/gotemplate/v3/collections"
 )
@@ -116,36 +117,66 @@ func (dh DictHelper) KeysAsString(dict baseIDict) collections.StringArray {
 
 // Merge merges the other dictionaries into the current dictionary.
 func (dh DictHelper) Merge(target baseIDict, sources []baseIDict) baseIDict {
+	return dh.internalMerge(target, sources, regularMerge)
+}
+
+// MergeOverwrite merges the other dictionaries into the current dictionary overwriting existing values.
+func (dh DictHelper) MergeOverwrite(target baseIDict, sources []baseIDict) baseIDict {
+	return dh.internalMerge(target, sources, overwriteMerge)
+}
+
+// Diff returns a dictionnary containing differences coming from the other dictionaries.
+func (dh DictHelper) Diff(target baseIDict, other baseIDict) baseIDict {
+	if other == nil {
+		return dh.CreateDictionary()
+	}
+	return dh.deepMerge(target, other, diffMerge)
+}
+
+type mergeMode uint8
+
+const (
+	regularMerge   = iota // Only merge missing values
+	overwriteMerge        // Overwrite existing value with new one
+	diffMerge             // Only return the missing and different values
+)
+
+func (dh DictHelper) internalMerge(target baseIDict, sources []baseIDict, mode mergeMode) baseIDict {
 	for i := range sources {
 		if sources[i] == nil {
 			continue
 		}
-		target = dh.deepMerge(target, dh.ConvertDict(sources[i]))
+		target = dh.deepMerge(target, dh.ConvertDict(sources[i]), mode)
 	}
 	return target
 }
 
-func (dh DictHelper) deepMerge(target baseIDict, source baseIDict) baseIDict {
+func (dh DictHelper) deepMerge(target baseIDict, source baseIDict, mode mergeMode) baseIDict {
 	targetMap := target.AsMap()
 	sourceMap := source.AsMap()
+	result := target
+	if mode == diffMerge {
+		result = target.Create()
+	}
 	for key := range sourceMap {
 		sourceValue, sourceHasKey := sourceMap[key]
 		targetValue, targetHasKey := targetMap[key]
+		targetValueDict, _ := collections.TryAsDictionary(targetValue)
+		sourceValueDict, _ := collections.TryAsDictionary(sourceValue)
 
-		if sourceHasKey && !targetHasKey {
-			targetMap[key] = sourceValue
+		if sourceHasKey && !targetHasKey || mode != regularMerge && targetValueDict == nil && !reflect.DeepEqual(targetValue, sourceValue) {
+			result.Set(key, sourceValue)
 			continue
 		}
 
-		targetValueDict, targetValueIsDict := targetValue.(baseIDict)
-		sourceValueDict, sourceValueIsDict := sourceValue.(baseIDict)
-
-		if sourceValueIsDict && targetValueIsDict {
-			targetMap[key] = dh.deepMerge(targetValueDict, sourceValueDict)
+		if sourceValueDict != nil && targetValueDict != nil {
+			if diff := dh.deepMerge(targetValueDict, sourceValueDict, mode); diff.Len() != 0 {
+				result.Set(key, diff)
+			}
 		}
 	}
 
-	return target
+	return result
 }
 
 // Omit returns a distinct copy of the object including all keys except specified ones.

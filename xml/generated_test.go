@@ -573,8 +573,6 @@ var mapFixture = map[string]interface{}{
 var dictFixture = xmlDict(xmlDictHelper.AsDictionary(mapFixture).AsMap())
 
 func dumpKeys(t *testing.T, d1, d2 xmlIDict) {
-	t.Parallel()
-
 	for key := range d1.AsMap() {
 		v1, v2 := d1.Get(key), d2.Get(key)
 		if reflect.DeepEqual(v1, v2) {
@@ -843,42 +841,176 @@ func Test_dict_Merge(t *testing.T) {
 	adding1 := xmlDict{
 		"int":        1000,
 		"Add1Int":    1,
-		"Add1String": "string",
+		"Add1String": "string1",
 	}
 	adding2 := xmlDict{
-		"Add2Int":    1,
-		"Add2String": "string",
+		"Add2Int":    2,
+		"Add2String": "string2",
 		"map": map[string]interface{}{
-			"sub1":   2,
+			"sub1":   "replaced by 2",
 			"newVal": "NewValue",
 		},
 	}
-	type args struct {
-		xmlDict xmlIDict
-		dicts   []xmlIDict
-	}
+
 	tests := []struct {
-		name string
-		d    xmlDict
-		args args
-		want xmlIDict
+		name          string
+		d             xmlDict
+		dicts         []xmlIDict
+		wantRegular   xmlIDict
+		wantOverwrite xmlIDict
+		wantDiff      xmlIDict
 	}{
-		{"Empty", nil, args{nil, []xmlIDict{}}, xmlDict{}},
-		{"Add map to empty", nil, args{dictFixture, []xmlIDict{}}, dictFixture},
-		{"Add map to same map", dictFixture, args{dictFixture, []xmlIDict{}}, dictFixture},
-		{"Add empty to map", dictFixture, args{nil, []xmlIDict{}}, dictFixture},
-		{"Add new1 to map", dictFixture, args{adding1, []xmlIDict{}}, dictFixture.Clone().Merge(adding1)},
-		{"Add new2 to map", dictFixture, args{adding2, []xmlIDict{}}, dictFixture.Clone().Merge(adding2)},
-		{"Add new1 & new2 to map", dictFixture, args{adding1, []xmlIDict{adding2}}, dictFixture.Clone().Merge(adding1, adding2)},
-		{"Add new1 & new2 to map", dictFixture, args{adding1, []xmlIDict{adding2}}, dictFixture.Clone().Merge(adding1).Merge(adding2)},
+		{"Empty", nil, nil, xmlDict{}, xmlDict{}, xmlDict{}},
+		{"Add map to empty", nil, []xmlIDict{dictFixture}, dictFixture, dictFixture, dictFixture},
+		{"Add map to same map", dictFixture, []xmlIDict{dictFixture}, dictFixture, dictFixture, xmlDict{}},
+		{"Add empty to map", dictFixture, nil, dictFixture, dictFixture, xmlDict{}},
+		{"Add new1 to map", dictFixture, []xmlIDict{adding1},
+			xmlDict{ // Regular mode
+				"Add1Int":    1,
+				"Add1String": "string1",
+				"float":      1.23,
+				"int":        123,
+				"list":       xmlList{1, "two"},
+				"listInt":    xmlList{1, 2, 3},
+				"map": xmlDict{
+					"sub1": 1,
+					"sub2": "two",
+				},
+				"mapInt": xmlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			xmlDict{ // Overwrite mode
+				"Add1Int":    1,
+				"Add1String": "string1",
+				"float":      1.23,
+				"int":        1000,
+				"list":       xmlList{1, "two"},
+				"listInt":    xmlList{1, 2, 3},
+				"map": xmlDict{
+					"sub1": 1,
+					"sub2": "two",
+				},
+				"mapInt": xmlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			xmlDict{ // Diff mode
+				"Add1Int":    1,
+				"Add1String": "string1",
+				"int":        1000,
+			},
+		},
+		{"Add new2 to map", dictFixture, []xmlIDict{adding2},
+			xmlDict{ // Regular mode
+				"Add2Int":    2,
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        123,
+				"list":       xmlList{1, "two"},
+				"listInt":    xmlList{1, 2, 3},
+				"map": xmlDict{
+					"sub1":   1,
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": xmlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			xmlDict{ // Overwrite mode
+				"Add2Int":    2,
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        123,
+				"list":       xmlList{1, "two"},
+				"listInt":    xmlList{1, 2, 3},
+				"map": xmlDict{
+					"sub1":   "replaced by 2",
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": xmlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			xmlDict{ // Diff mode
+				"Add2Int":    2,
+				"Add2String": "string2",
+				"map": xmlDict{
+					"newVal": "NewValue",
+					"sub1":   "replaced by 2",
+				},
+			},
+		},
+		{"Add new1 & new2 to map", dictFixture, []xmlIDict{adding1, adding2},
+			xmlDict{ // Regular mode
+				"Add1Int":    1,
+				"Add2Int":    2,
+				"Add1String": "string1",
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        123,
+				"list":       xmlList{1, "two"},
+				"listInt":    xmlList{1, 2, 3},
+				"map": xmlDict{
+					"sub1":   1,
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": xmlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			xmlDict{ // Overwrite mode
+				"Add1Int":    1,
+				"Add2Int":    2,
+				"Add1String": "string1",
+				"Add2String": "string2",
+				"float":      1.23,
+				"int":        1000,
+				"list":       xmlList{1, "two"},
+				"listInt":    xmlList{1, 2, 3},
+				"map": xmlDict{
+					"sub1":   "replaced by 2",
+					"sub2":   "two",
+					"newVal": "NewValue",
+				},
+				"mapInt": xmlDict{
+					"1": 1,
+					"2": "two",
+				},
+				"string": "Foo bar",
+			},
+			nil, // Diff mode not tested on multiple sources
+		},
 	}
 	for _, tt := range tests {
-		go t.Run(tt.name, func(t *testing.T) {
-			d := tt.d.Clone()
-			got := d.Merge(tt.args.xmlDict, tt.args.dicts...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("XmlDict.Merge():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-				dumpKeys(t, got, tt.want)
+		t.Run(tt.name, func(t *testing.T) {
+			var first xmlIDict
+			var rest []xmlIDict
+			if len(tt.dicts) >= 1 {
+				first = tt.dicts[0]
+				rest = tt.dicts[1:]
+			}
+			var got xmlIDict
+			got = tt.d.Clone().Merge(first, rest...)
+			assert.Equal(t, tt.wantRegular, got, "Regular merge")
+			got = tt.d.Clone().Overwrite(first, rest...)
+			assert.Equal(t, tt.wantOverwrite, got, "Overwrite merge")
+			if len(rest) == 0 {
+				got = tt.d.Clone().Diff(first)
+				assert.Equal(t, tt.wantDiff, got, "Diff merge")
 			}
 		})
 	}

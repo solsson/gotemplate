@@ -113,8 +113,16 @@ func (d yamlDict) Delete(key interface{}, otherKeys ...interface{}) (yamlIDict, 
 	return yamlDictHelper.Delete(d, append([]interface{}{key}, otherKeys...))
 }
 
+func (d yamlDict) Diff(dict yamlIDict) yamlIDict {
+	return yamlDictHelper.Diff(d, dict)
+}
+
 func (d yamlDict) Merge(dict yamlIDict, otherDicts ...yamlIDict) yamlIDict {
 	return yamlDictHelper.Merge(d, append([]yamlIDict{dict}, otherDicts...))
+}
+
+func (d yamlDict) Overwrite(dict yamlIDict, otherDicts ...yamlIDict) yamlIDict {
+	return yamlDictHelper.MergeOverwrite(d, append([]yamlIDict{dict}, otherDicts...))
 }
 
 func (d yamlDict) Omit(key interface{}, otherKeys ...interface{}) yamlIDict {

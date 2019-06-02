@@ -113,8 +113,16 @@ func (d xmlDict) Delete(key interface{}, otherKeys ...interface{}) (xmlIDict, er
 	return xmlDictHelper.Delete(d, append([]interface{}{key}, otherKeys...))
 }
 
+func (d xmlDict) Diff(dict xmlIDict) xmlIDict {
+	return xmlDictHelper.Diff(d, dict)
+}
+
 func (d xmlDict) Merge(dict xmlIDict, otherDicts ...xmlIDict) xmlIDict {
 	return xmlDictHelper.Merge(d, append([]xmlIDict{dict}, otherDicts...))
+}
+
+func (d xmlDict) Overwrite(dict xmlIDict, otherDicts ...xmlIDict) xmlIDict {
+	return xmlDictHelper.MergeOverwrite(d, append([]xmlIDict{dict}, otherDicts...))
 }
 
 func (d xmlDict) Omit(key interface{}, otherKeys ...interface{}) xmlIDict {
