@@ -13,6 +13,7 @@ Get(...int) interface{}
 GetHelpers() IDictionaryHelper, IListHelper
 Has(...interface{}) bool
 Intersect(...interface{}) IGenericList
+IsArrayOfSingleMap() bool
 Join(interface{}) String
 Last() interface{}
 Len() int
