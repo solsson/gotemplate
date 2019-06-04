@@ -10,6 +10,7 @@ import (
 	"github.com/coveo/gotemplate/v3/collections"
 	"github.com/coveo/gotemplate/v3/hcl"
 	"github.com/coveo/gotemplate/v3/json"
+	"github.com/coveo/gotemplate/v3/toml"
 	"github.com/coveo/gotemplate/v3/utils"
 	"github.com/coveo/gotemplate/v3/xml"
 	"github.com/coveo/gotemplate/v3/yaml"
@@ -73,6 +74,7 @@ var dataFuncsConversion = dictionary{
 	"toQuotedJson":   toQuotedJSON,
 	"toQuotedTFVars": toQuotedTFVars,
 	"toTFVars":       toTFVars,
+	"toToml":         toTOML,
 	"toYaml":         toYAML,
 	//"toXml":          toXML,
 }
@@ -106,18 +108,20 @@ var dataFuncsArgs = arguments{
 	"safeIndex":      {"value", "index", "default"},
 	"set":            {"dict", "key", "value"},
 	"slice":          {"value", "args"},
-	"string":         {"value"},
 	"String":         {"value"},
+	"string":         {"value"},
 	"toBash":         {"value"},
 	"toHcl":          {"value"},
 	"toInternalHcl":  {"value"},
 	"toJson":         {"value"},
+	"toml":           {"toml", "context"},
 	"toPrettyHcl":    {"value"},
 	"toPrettyJson":   {"value"},
 	"toPrettyTFVars": {"value"},
 	"toQuotedHcl":    {"value"},
 	"toQuotedJson":   {"value"},
 	"toQuotedTFVars": {"value"},
+	"toToml":         {"value"},
 	"toTFVars":       {"value"},
 	"toYaml":         {"value"},
 	"undef":          {"default", "values"},
@@ -125,7 +129,7 @@ var dataFuncsArgs = arguments{
 	"union":          {"list", "elements"},
 	"unset":          {"dictionary", "key"},
 	"without":        {"list", "elements"},
-	"xml":            {"yaml", "context"},
+	"xml":            {"xml", "context"},
 	"yaml":           {"yaml", "context"},
 }
 
@@ -143,11 +147,13 @@ var dataFuncsAliases = aliases{
 	"toHcl":         {"toHCL"},
 	"toInternalHcl": {"toInternalHCL", "toIHCL", "toIHcl"},
 	"toJson":        {"toJSON"},
+	"toml":          {"TOML", "fromToml", "fromTOML"},
 	"toPrettyHcl":   {"toPrettyHCL"},
 	"toPrettyJson":  {"toPrettyJSON"},
 	"toPrettyXml":   {"toPrettyXML"},
 	"toQuotedHcl":   {"toQuotedHCL"},
 	"toQuotedJson":  {"toQuotedJSON"},
+	"toToml":        {"toTOML"},
 	"toXml":         {"toXML"},
 	"toYaml":        {"toYAML"},
 	"undef":         {"ifUndef"},
@@ -197,6 +203,7 @@ var dataFuncsHelp = descriptions{
 	"toHcl":          "Converts the supplied value to compact HCL representation.",
 	"toInternalHcl":  "Converts the supplied value to compact HCL representation used inside outer HCL definition.",
 	"toJson":         "Converts the supplied value to compact JSON representation.",
+	"toml":           "Converts the supplied toml string into data structure (Go spec). If context is omitted, default context is used.",
 	"toPrettyHcl":    "Converts the supplied value to pretty HCL representation.",
 	"toPrettyJson":   "Converts the supplied value to pretty JSON representation.",
 	"toPrettyTFVars": "Converts the supplied value to pretty HCL representation (without multiple map declarations).",
@@ -205,6 +212,7 @@ var dataFuncsHelp = descriptions{
 	"toQuotedJson":   "Converts the supplied value to compact quoted JSON representation.",
 	"toQuotedTFVars": "Converts the supplied value to compact HCL representation (without multiple map declarations).",
 	"toTFVars":       "Converts the supplied value to compact HCL representation (without multiple map declarations).",
+	"toToml":         "Converts the supplied value to TOML representation.",
 	"toXml":          "Converts the supplied value to XML representation.",
 	"toYaml":         "Converts the supplied value to YAML representation.",
 	"undef":          "Returns the default value if value is not set, alias `undef` (differs from Sprig `default` function as empty value such as 0, false, \"\" are not considered as unset).",
@@ -229,6 +237,7 @@ func (t *Template) addDataFuncs() {
 		"hcl":  t.hclConverter,
 		"json": t.jsonConverter,
 		//"xml":  t.xmlConverter,
+		"toml": t.tomlConverter,
 		"yaml": t.yamlConverter,
 	}, dataConversion, options)
 	t.optionsEnabled[Data] = true
@@ -279,6 +288,11 @@ func toQuotedTFVars(v interface{}) (string, error) {
 	output, err := hcl.MarshalTFVars(v)
 	result := fmt.Sprintf("%q", output)
 	return result[1 : len(result)-1], err
+}
+
+func toTOML(v interface{}) (string, error) {
+	output, err := toml.BSMarshal(v)
+	return string(output), err
 }
 
 func toXML(v interface{}) (string, error) {
@@ -431,6 +445,10 @@ func (t Template) templateConverter(to marshaler, from unMarshaler, source inter
 
 func (t Template) xmlConverter(source interface{}, context ...interface{}) (interface{}, error) {
 	return t.templateConverter(xml.Marshal, xml.Unmarshal, source, context...)
+}
+
+func (t Template) tomlConverter(source interface{}, context ...interface{}) (interface{}, error) {
+	return t.templateConverter(toml.BSMarshal, toml.Unmarshal, source, context...)
 }
 
 func (t Template) yamlConverter(source interface{}, context ...interface{}) (interface{}, error) {

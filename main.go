@@ -13,6 +13,7 @@ import (
 	"github.com/coveo/gotemplate/v3/hcl"
 	"github.com/coveo/gotemplate/v3/json"
 	"github.com/coveo/gotemplate/v3/template"
+	"github.com/coveo/gotemplate/v3/toml"
 	"github.com/coveo/gotemplate/v3/utils"
 	"github.com/coveo/gotemplate/v3/yaml"
 	"github.com/fatih/color"
@@ -59,7 +60,7 @@ func runGotemplate() (exitCode int) {
 		delimiters       = run.Flag("delimiters", "Define the default delimiters for go template (separate the left, right and razor delimiters by a comma) (--del)").PlaceHolder("{{,}},@").String()
 		varFiles         = run.Flag("import", "Import variables files (could be any of YAML, JSON or HCL format)").PlaceHolder("file").Short('i').Strings()
 		namedVars        = run.Flag("var", "Import named variables (if value is a file, the content is loaded)").PlaceHolder("values").Short('V').Strings()
-		typeMode         = run.Flag("type", "Force the type used for the main context (Json, Yaml, Hcl)").Short('t').Enum("Hcl", "h", "hcl", "H", "HCL", "Json", "j", "json", "J", "JSON", "Yaml", "Yml", "y", "yml", "yaml", "Y", "YML", "YAML")
+		typeMode         = run.Flag("type", "Force the type used for the main context (Json, Hcl, Yaml, Toml)").Short('t').Enum("Hcl", "h", "hcl", "H", "HCL", "Json", "j", "json", "J", "JSON", "Toml", "t", "toml", "T", "Yaml", "Yml", "y", "yml", "yaml", "Y", "YML", "YAML")
 		includePatterns  = run.Flag("patterns", "Additional patterns that should be processed by gotemplate").PlaceHolder("pattern").Short('p').Strings()
 		excludedPatterns = run.Flag("exclude", "Exclude file patterns (comma separated) when applying gotemplate recursively").PlaceHolder("pattern").Short('e').Strings()
 		overwrite        = run.Flag("overwrite", "Overwrite file instead of renaming them if they exist (required only if source folder is the same as the target folder)").Short('o').Bool()
@@ -170,6 +171,9 @@ func runGotemplate() (exitCode int) {
 		case "J":
 			collections.ListHelper = json.GenericListHelper
 			collections.DictionaryHelper = json.DictionaryHelper
+		case "T":
+			collections.ListHelper = toml.GenericListHelper
+			collections.DictionaryHelper = toml.DictionaryHelper
 		}
 	} else {
 		collections.ListHelper = json.GenericListHelper

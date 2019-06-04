@@ -165,7 +165,7 @@ func TestCli(t *testing.T) {
 			if tt.expectedResult != "" {
 				generatedFile := path.Join(tempDir, "test.generated")
 				readGeneratedFileContent := must(ioutil.ReadFile(generatedFile)).([]byte)
-				assert.Equal(t, []byte(tt.expectedResult), readGeneratedFileContent, "Bad generated content")
+				assert.Equal(t, tt.expectedResult, string(readGeneratedFileContent), "Bad generated content")
 			}
 		})
 	}

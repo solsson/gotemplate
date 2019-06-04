@@ -32,9 +32,7 @@ func Test_list_Append(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Append(tt.values...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Append():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Append(tt.values...))
 		})
 	}
 }
@@ -55,9 +53,7 @@ func Test_list_Prepend(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Prepend(tt.values...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Prepend():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Prepend(tt.values...))
 		})
 	}
 }
@@ -76,9 +72,7 @@ func Test_list_AsArray(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.AsArray(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.AsList():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.AsArray())
 		})
 	}
 }
@@ -97,9 +91,7 @@ func Test_HclList_Strings(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Strings(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Strings() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Strings())
 		})
 	}
 }
@@ -116,12 +108,8 @@ func Test_list_Capacity(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Capacity(); got != tt.want {
-				t.Errorf("HclList.Capacity() = %v, want %v", got, tt.want)
-			}
-			if tt.l.Capacity() != tt.l.Cap() {
-				t.Errorf("Cap and Capacity return different values")
-			}
+			assert.Equal(t, tt.want, tt.l.Capacity())
+			assert.Equal(t, tt.l.Cap(), tt.l.Capacity(), "Cap and Capacity return different values")
 		})
 	}
 }
@@ -140,9 +128,7 @@ func Test_list_Clone(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Clone(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Clone():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Clone())
 		})
 	}
 }
@@ -167,9 +153,7 @@ func Test_list_Get(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Get(tt.indexes...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Get() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Get(tt.indexes...))
 		})
 	}
 }
@@ -188,12 +172,8 @@ func Test_list_Len(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Len(); got != tt.want {
-				t.Errorf("HclList.Len() = %v, want %v", got, tt.want)
-			}
-			if tt.l.Len() != tt.l.Count() {
-				t.Errorf("Len and Count return different values")
-			}
+			assert.Equal(t, tt.want, tt.l.Len())
+			assert.Equal(t, tt.l.Len(), tt.l.Count(), "Len and Count return different values")
 		})
 	}
 }
@@ -205,27 +185,25 @@ func Test_CreateList(t *testing.T) {
 		name    string
 		args    []int
 		want    hclIList
-		wantErr bool
+		wantErr error
 	}{
-		{"Empty", nil, hclList{}, false},
-		{"With nil elements", []int{10}, make(hclList, 10), false},
-		{"With capacity", []int{0, 10}, make(hclList, 0, 10), false},
-		{"Too much args", []int{0, 10, 1}, nil, true},
+		{"Empty", nil, hclList{}, nil},
+		{"With nil elements", []int{10}, make(hclList, 10), nil},
+		{"With capacity", []int{0, 10}, make(hclList, 0, 10), nil},
+		{"Too much args", []int{0, 10, 1}, nil, fmt.Errorf("CreateList only accept 2 arguments, size and capacity")},
 	}
 	for _, tt := range tests {
 		var err error
 		t.Run(tt.name, func(t *testing.T) {
 			defer func() { err = errors.Trap(err, recover()) }()
 			got := hclListHelper.CreateList(tt.args...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("CreateList():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
-			if got.Capacity() != tt.want.Cap() {
-				t.Errorf("CreateList() capacity:\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got.Cap(), tt.want.Capacity())
-			}
+			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.want.Cap(), got.Capacity())
 		})
-		if (err != nil) != tt.wantErr {
-			t.Errorf("CreateList() error = %v, wantErr %v", err, tt.wantErr)
+		if tt.wantErr == nil {
+			assert.NoError(t, err)
+		} else {
+			assert.EqualError(t, err, tt.wantErr.Error())
 		}
 	}
 }
@@ -247,12 +225,8 @@ func Test_list_Create(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.l.Create(tt.args...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Create():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
-			if got.Capacity() != tt.want.Capacity() {
-				t.Errorf("HclList.Create() capacity:\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got.Capacity(), tt.want.Capacity())
-			}
+			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.want.Cap(), got.Capacity())
 		})
 	}
 }
@@ -276,9 +250,7 @@ func Test_list_New(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.New(tt.args...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Create():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.New(tt.args...))
 		})
 	}
 }
@@ -291,24 +263,22 @@ func Test_list_CreateDict(t *testing.T) {
 		l       hclList
 		args    []int
 		want    hclIDict
-		wantErr bool
+		wantErr error
 	}{
-		{"Empty", nil, nil, hclDict{}, false},
-		{"With capacity", nil, []int{10}, hclDict{}, false},
-		{"With too much parameter", nil, []int{10, 1}, nil, true},
+		{"Empty", nil, nil, hclDict{}, nil},
+		{"With capacity", nil, []int{10}, hclDict{}, nil},
+		{"With too much parameter", nil, []int{10, 1}, nil, fmt.Errorf("CreateList only accept 1 argument for size")},
 	}
 	for _, tt := range tests {
 		var err error
 		t.Run(tt.name, func(t *testing.T) {
 			defer func() { err = errors.Trap(err, recover()) }()
-			got := tt.l.CreateDict(tt.args...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.CreateDict():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.CreateDict(tt.args...))
 		})
-		if (err != nil) != tt.wantErr {
-			t.Errorf("HclList.CreateDict() error = %v, wantErr %v", err, tt.wantErr)
-			return
+		if tt.wantErr == nil {
+			assert.NoError(t, err)
+		} else {
+			assert.EqualError(t, err, tt.wantErr.Error())
 		}
 	}
 }
@@ -331,12 +301,8 @@ func Test_list_Contains(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Contains(tt.args...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Contains():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
-			if got := tt.l.Has(tt.args...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Has():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Contains(tt.args...))
+			assert.Equal(t, tt.want, tt.l.Has(tt.args...))
 		})
 	}
 }
@@ -357,12 +323,8 @@ func Test_list_First_Last(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.First(); !reflect.DeepEqual(got, tt.wantFirst) {
-				t.Errorf("HclList.First():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.wantFirst)
-			}
-			if got := tt.l.Last(); !reflect.DeepEqual(got, tt.wantLast) {
-				t.Errorf("HclList.Last():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.wantLast)
-			}
+			assert.Equal(t, tt.wantFirst, tt.l.First())
+			assert.Equal(t, tt.wantLast, tt.l.Last())
 		})
 	}
 }
@@ -391,12 +353,8 @@ func Test_list_Pop(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, gotL := tt.l.Pop(tt.args...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Pop():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
-			if !reflect.DeepEqual(gotL, tt.wantList) {
-				t.Errorf("HclList.Pop():\ngotList %[1]v (%[1]T)\n   want %[2]v (%[2]T)", gotL, tt.wantList)
-			}
+			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.wantList, gotL)
 		})
 	}
 }
@@ -420,9 +378,7 @@ func Test_list_Intersect(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Intersect(tt.args...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Intersect():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Intersect(tt.args...))
 		})
 	}
 }
@@ -446,9 +402,7 @@ func Test_list_Union(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Union(tt.args...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Union():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Union(tt.args...))
 		})
 	}
 }
@@ -471,9 +425,7 @@ func Test_list_Without(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Without(tt.args...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Without():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Without(tt.args...))
 		})
 	}
 }
@@ -493,12 +445,11 @@ func Test_list_Unique(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Unique(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Unique():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Unique())
 		})
 	}
 }
+
 func Test_list_Reverse(t *testing.T) {
 	t.Parallel()
 
@@ -513,10 +464,7 @@ func Test_list_Reverse(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l := tt.l.Clone()
-			if got := l.Reverse(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Reverse():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Clone().Reverse())
 		})
 	}
 }
@@ -533,22 +481,21 @@ func Test_list_Set(t *testing.T) {
 		l       hclIList
 		args    args
 		want    hclIList
-		wantErr bool
+		wantErr error
 	}{
-		{"Empty", hclList{}, args{2, 1}, hclList{nil, nil, 1}, false},
-		{"List of int", hclList{1, 2, 3}, args{0, 10}, hclList{10, 2, 3}, false},
-		{"List of string", strFixture, args{2, "You're"}, hclList{"Hello", "World,", "You're", "Foo", "Bar!"}, false},
-		{"Negative", hclList{}, args{-1, "negative value"}, nil, true},
+		{"Empty", hclList{}, args{2, 1}, hclList{nil, nil, 1}, nil},
+		{"List of int", hclList{1, 2, 3}, args{0, 10}, hclList{10, 2, 3}, nil},
+		{"List of string", strFixture, args{2, "You're"}, hclList{"Hello", "World,", "You're", "Foo", "Bar!"}, nil},
+		{"Negative", hclList{}, args{-1, "negative value"}, nil, fmt.Errorf("index must be positive number")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.l.Clone().Set(tt.args.i, tt.args.v)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("HclList.Set() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Set():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
+			assert.Equal(t, tt.want, got)
+			if tt.wantErr == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.EqualError(t, err, tt.wantErr.Error())
 			}
 		})
 	}
@@ -573,8 +520,6 @@ var mapFixture = map[string]interface{}{
 var dictFixture = hclDict(hclDictHelper.AsDictionary(mapFixture).AsMap())
 
 func dumpKeys(t *testing.T, d1, d2 hclIDict) {
-	t.Parallel()
-
 	for key := range d1.AsMap() {
 		v1, v2 := d1.Get(key), d2.Get(key)
 		if reflect.DeepEqual(v1, v2) {
@@ -598,9 +543,7 @@ func Test_dict_AsMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.d.AsMap(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.AsMap():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.d.AsMap())
 		})
 	}
 }
@@ -622,22 +565,16 @@ func Test_dict_Clone(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.d.Clone(tt.keys...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.Clone():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-				dumpKeys(t, got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 
 			// Ensure that the copy is distinct from the original
-			got.Set("NewFields", "Test")
-			if reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Should be different:\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
-			if !got.Has("NewFields") || !reflect.DeepEqual(got.Get("NewFields"), "Test") {
-				t.Errorf("Element has not been added")
-			}
-			if got.Len() != tt.want.Count()+1 {
-				t.Errorf("Len and Count don't return the same value")
-			}
+			got.Set("NewField", "Test")
+			assert.NotEqual(t, tt.want, got)
+			assert.True(t, got.Has("NewField"))
+			assert.Equal(t, "Test", got.Get("NewField"))
+			assert.Equal(t, tt.want.Count()+1, got.Len())
+			assert.False(t, tt.d.Has("NewField"), "Has: Original dictionary has been modified")
+			assert.Nil(t, tt.d.Get("NewField"), "Get: Original dictionary has been modified")
 		})
 	}
 }
@@ -663,12 +600,9 @@ func Test_HclDict_CreateList(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.d.CreateList(tt.args...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.CreateList() = %v, want %v", got, tt.want)
-			}
-			if got.Len() != tt.wantLen || got.Cap() != tt.wantCapacity {
-				t.Errorf("HclDict.CreateList() size: %d, %d vs %d, %d", got.Len(), got.Cap(), tt.wantLen, tt.wantCapacity)
-			}
+			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.wantLen, got.Len())
+			assert.Equal(t, tt.wantCapacity, got.Cap())
 		})
 	}
 }
@@ -681,24 +615,22 @@ func Test_dict_Create(t *testing.T) {
 		d       hclDict
 		args    []int
 		want    hclIDict
-		wantErr bool
+		wantErr error
 	}{
-		{"Empty", nil, nil, hclDict{}, false},
-		{"With capacity", nil, []int{10}, hclDict{}, false},
-		{"With too much parameter", nil, []int{10, 1}, nil, true},
+		{"Empty", nil, nil, hclDict{}, nil},
+		{"With capacity", nil, []int{10}, hclDict{}, nil},
+		{"With too much parameter", nil, []int{10, 1}, nil, fmt.Errorf("CreateList only accept 1 argument for size")},
 	}
 	for _, tt := range tests {
 		var err error
 		t.Run(tt.name, func(t *testing.T) {
 			defer func() { err = errors.Trap(err, recover()) }()
-			got := tt.d.Create(tt.args...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.Create():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.d.Create(tt.args...))
 		})
-		if (err != nil) != tt.wantErr {
-			t.Errorf("HclList.Create() error = %v, wantErr %v", err, tt.wantErr)
-			return
+		if tt.wantErr == nil {
+			assert.NoError(t, err)
+		} else {
+			assert.EqualError(t, err, tt.wantErr.Error())
 		}
 	}
 }
@@ -723,9 +655,7 @@ func Test_dict_Default(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.d.Default(tt.args.key, tt.args.defVal); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.Default() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.d.Default(tt.args.key, tt.args.defVal))
 		})
 	}
 }
@@ -742,25 +672,22 @@ func Test_dict_Delete(t *testing.T) {
 		d       hclDict
 		args    args
 		want    hclIDict
-		wantErr bool
+		wantErr error
 	}{
-		{"Empty", nil, args{}, hclDict{}, true},
-		{"Map", dictFixture, args{}, dictFixture, true},
-		{"Non existant key", dictFixture, args{"Test", nil}, dictFixture, true},
-		{"Map with keys", dictFixture, args{"int", []interface{}{"list"}}, dictFixture.Clone("float", "string", "listInt", "map", "mapInt"), false},
-		{"Map with keys + non existant", dictFixture, args{"int", []interface{}{"list", "Test"}}, dictFixture.Clone("float", "string", "listInt", "map", "mapInt"), true},
+		{"Empty", nil, args{}, hclDict{}, fmt.Errorf("key <nil> not found")},
+		{"Map", dictFixture, args{}, dictFixture, fmt.Errorf("key <nil> not found")},
+		{"Non existant key", dictFixture, args{"Test", nil}, dictFixture, fmt.Errorf("key Test not found")},
+		{"Map with keys", dictFixture, args{"int", []interface{}{"list"}}, dictFixture.Clone("float", "string", "listInt", "map", "mapInt"), nil},
+		{"Map with keys + non existant", dictFixture, args{"int", []interface{}{"list", "Test"}}, dictFixture.Clone("float", "string", "listInt", "map", "mapInt"), fmt.Errorf("key Test not found")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d := tt.d.Clone()
-			got, err := d.Delete(tt.args.key, tt.args.keys...)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("HclDict.Delete() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.Delete():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-				dumpKeys(t, got, tt.want)
+			got, err := tt.d.Clone().Delete(tt.args.key, tt.args.keys...)
+			assert.Equal(t, tt.want, got)
+			if tt.wantErr == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.EqualError(t, err, tt.wantErr.Error())
 			}
 		})
 	}
@@ -785,14 +712,8 @@ func Test_dict_Flush(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			d := tt.d.Clone()
 			got := d.Flush(tt.keys...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.Flush():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-				dumpKeys(t, got, tt.want)
-			}
-			if !reflect.DeepEqual(d, got) {
-				t.Errorf("Should be equal after: %v, want %v", d, got)
-				dumpKeys(t, d, got)
-			}
+			assert.Equal(t, tt.want, got)
+			assert.Equal(t, d, got)
 		})
 	}
 }
@@ -810,9 +731,7 @@ func Test_dict_Keys(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.d.GetKeys(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.GetKeys():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.d.GetKeys())
 		})
 	}
 }
@@ -830,9 +749,7 @@ func Test_dict_KeysAsString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.d.KeysAsString(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.KeysAsString():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.d.KeysAsString())
 		})
 	}
 }
@@ -874,12 +791,7 @@ func Test_dict_Merge(t *testing.T) {
 	}
 	for _, tt := range tests {
 		go t.Run(tt.name, func(t *testing.T) {
-			d := tt.d.Clone()
-			got := d.Merge(tt.args.hclDict, tt.args.dicts...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.Merge():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-				dumpKeys(t, got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.d.Clone().Merge(tt.args.hclDict, tt.args.dicts...))
 		})
 	}
 }
@@ -897,9 +809,7 @@ func Test_dict_Values(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.d.GetValues(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.GetValues():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.d.GetValues())
 		})
 	}
 }
@@ -922,13 +832,8 @@ func Test_dict_Pop(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d := tt.d.Clone()
-			got := d.Pop(tt.args...)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.Pop():\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", got, tt.want)
-			}
-			if !reflect.DeepEqual(d, tt.wantObject) {
-				t.Errorf("HclDict.Pop() object:\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", d, tt.wantObject)
-			}
+			assert.Equal(t, tt.want, d.Pop(tt.args...))
+			assert.Equal(t, tt.wantObject, d)
 		})
 	}
 }
@@ -953,9 +858,7 @@ func Test_dict_Add(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.d.Add(tt.args.key, tt.args.v); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.Add() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.d.Add(tt.args.key, tt.args.v))
 		})
 	}
 }
@@ -979,9 +882,7 @@ func Test_dict_Set(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.d.Set(tt.args.key, tt.args.v); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.Set() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.d.Set(tt.args.key, tt.args.v))
 		})
 	}
 }
@@ -1002,9 +903,7 @@ func Test_dict_Transpose(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.d.Transpose(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclDict.Transpose() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.d.Transpose())
 		})
 	}
 }
@@ -1023,9 +922,7 @@ func Test_HclList_Get(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.Get(tt.args.indexes...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.Get() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.Get(tt.args.indexes...))
 		})
 	}
 }
@@ -1040,9 +937,7 @@ func Test_HclList_TypeName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.TypeName(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HclList.TypeName() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.TypeName())
 		})
 	}
 }

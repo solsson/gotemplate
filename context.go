@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"strings"
 
 	"github.com/coveo/gotemplate/v3/collections"
@@ -33,7 +34,7 @@ func createContext(varsFiles []string, namedVars []string, mode string, ignoreMi
 
 	for i := range namedVars {
 		data := collections.CreateDictionary().AsMap()
-		if err := collections.ConvertData(namedVars[i], &data); err != nil {
+		if err := collections.ConvertData(namedVars[i], &data); err != nil || must(regexp.MatchString(`\w+\s*=\s*'`, namedVars[i])).(bool) {
 			var fd fileDef
 			fd.name, fd.value = collections.Split2(namedVars[i], "=")
 			if fd.value == "" {

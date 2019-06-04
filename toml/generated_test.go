@@ -2,7 +2,7 @@
 // Any changes will be lost if this file is regenerated.
 // see https://github.com/cheekybits/genny
 
-package json
+package toml
 
 import (
 	"fmt"
@@ -14,20 +14,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var strFixture = jsonList(jsonListHelper.NewStringList(strings.Split("Hello World, I'm Foo Bar!", " ")...).AsArray())
+var strFixture = tomlList(tomlListHelper.NewStringList(strings.Split("Hello World, I'm Foo Bar!", " ")...).AsArray())
 
 func Test_list_Append(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name   string
-		l      jsonIList
+		l      tomlIList
 		values []interface{}
-		want   jsonIList
+		want   tomlIList
 	}{
-		{"Empty", jsonList{}, []interface{}{1, 2, 3}, jsonList{1, 2, 3}},
-		{"List of int", jsonList{1, 2, 3}, []interface{}{4, 5}, jsonList{1, 2, 3, 4, 5}},
-		{"List of string", strFixture, []interface{}{"That's all folks!"}, jsonList{"Hello", "World,", "I'm", "Foo", "Bar!", "That's all folks!"}},
+		{"Empty", tomlList{}, []interface{}{1, 2, 3}, tomlList{1, 2, 3}},
+		{"List of int", tomlList{1, 2, 3}, []interface{}{4, 5}, tomlList{1, 2, 3, 4, 5}},
+		{"List of string", strFixture, []interface{}{"That's all folks!"}, tomlList{"Hello", "World,", "I'm", "Foo", "Bar!", "That's all folks!"}},
 	}
 
 	for _, tt := range tests {
@@ -42,13 +42,13 @@ func Test_list_Prepend(t *testing.T) {
 
 	tests := []struct {
 		name   string
-		l      jsonIList
+		l      tomlIList
 		values []interface{}
-		want   jsonIList
+		want   tomlIList
 	}{
-		{"Empty", jsonList{}, []interface{}{1, 2, 3}, jsonList{1, 2, 3}},
-		{"List of int", jsonList{1, 2, 3}, []interface{}{4, 5}, jsonList{4, 5, 1, 2, 3}},
-		{"List of string", strFixture, []interface{}{"That's all folks!"}, jsonList{"That's all folks!", "Hello", "World,", "I'm", "Foo", "Bar!"}},
+		{"Empty", tomlList{}, []interface{}{1, 2, 3}, tomlList{1, 2, 3}},
+		{"List of int", tomlList{1, 2, 3}, []interface{}{4, 5}, tomlList{4, 5, 1, 2, 3}},
+		{"List of string", strFixture, []interface{}{"That's all folks!"}, tomlList{"That's all folks!", "Hello", "World,", "I'm", "Foo", "Bar!"}},
 	}
 
 	for _, tt := range tests {
@@ -63,11 +63,11 @@ func Test_list_AsArray(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonList
+		l    tomlList
 		want []interface{}
 	}{
-		{"Empty List", jsonList{}, []interface{}{}},
-		{"List of int", jsonList{1, 2, 3}, []interface{}{1, 2, 3}},
+		{"Empty List", tomlList{}, []interface{}{}},
+		{"List of int", tomlList{1, 2, 3}, []interface{}{1, 2, 3}},
 		{"List of string", strFixture, []interface{}{"Hello", "World,", "I'm", "Foo", "Bar!"}},
 	}
 	for _, tt := range tests {
@@ -77,16 +77,16 @@ func Test_list_AsArray(t *testing.T) {
 	}
 }
 
-func Test_JsonList_Strings(t *testing.T) {
+func Test_TomlList_Strings(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name string
-		l    jsonList
+		l    tomlList
 		want []string
 	}{
-		{"Empty List", jsonList{}, []string{}},
-		{"List of int", jsonList{1, 2, 3}, []string{"1", "2", "3"}},
+		{"Empty List", tomlList{}, []string{}},
+		{"List of int", tomlList{1, 2, 3}, []string{"1", "2", "3"}},
 		{"List of string", strFixture, []string{"Hello", "World,", "I'm", "Foo", "Bar!"}},
 	}
 	for _, tt := range tests {
@@ -101,10 +101,10 @@ func Test_list_Capacity(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonIList
+		l    tomlIList
 		want int
 	}{
-		{"Empty List with 100 spaces", jsonListHelper.CreateList(0, 100), 100},
+		{"Empty List with 100 spaces", tomlListHelper.CreateList(0, 100), 100},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -119,12 +119,12 @@ func Test_list_Clone(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonList
-		want jsonIList
+		l    tomlList
+		want tomlIList
 	}{
-		{"Empty List", jsonList{}, jsonList{}},
-		{"List of int", jsonList{1, 2, 3}, jsonList{1, 2, 3}},
-		{"List of string", strFixture, jsonList{"Hello", "World,", "I'm", "Foo", "Bar!"}},
+		{"Empty List", tomlList{}, tomlList{}},
+		{"List of int", tomlList{1, 2, 3}, tomlList{1, 2, 3}},
+		{"List of string", strFixture, tomlList{"Hello", "World,", "I'm", "Foo", "Bar!"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -138,13 +138,13 @@ func Test_list_Get(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		l       jsonList
+		l       tomlList
 		indexes []int
 		want    interface{}
 	}{
-		{"Empty List", jsonList{}, []int{0}, nil},
-		{"Negative index", jsonList{}, []int{-1}, nil},
-		{"List of int", jsonList{1, 2, 3}, []int{0}, 1},
+		{"Empty List", tomlList{}, []int{0}, nil},
+		{"Negative index", tomlList{}, []int{-1}, nil},
+		{"List of int", tomlList{1, 2, 3}, []int{0}, 1},
 		{"List of string", strFixture, []int{1}, "World,"},
 		{"Get last", strFixture, []int{-1}, "Bar!"},
 		{"Get before last", strFixture, []int{-2}, "Foo"},
@@ -163,11 +163,11 @@ func Test_list_Len(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonList
+		l    tomlList
 		want int
 	}{
-		{"Empty List", jsonList{}, 0},
-		{"List of int", jsonList{1, 2, 3}, 3},
+		{"Empty List", tomlList{}, 0},
+		{"List of int", tomlList{1, 2, 3}, 3},
 		{"List of string", strFixture, 5},
 	}
 	for _, tt := range tests {
@@ -184,19 +184,19 @@ func Test_CreateList(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    []int
-		want    jsonIList
+		want    tomlIList
 		wantErr error
 	}{
-		{"Empty", nil, jsonList{}, nil},
-		{"With nil elements", []int{10}, make(jsonList, 10), nil},
-		{"With capacity", []int{0, 10}, make(jsonList, 0, 10), nil},
+		{"Empty", nil, tomlList{}, nil},
+		{"With nil elements", []int{10}, make(tomlList, 10), nil},
+		{"With capacity", []int{0, 10}, make(tomlList, 0, 10), nil},
 		{"Too much args", []int{0, 10, 1}, nil, fmt.Errorf("CreateList only accept 2 arguments, size and capacity")},
 	}
 	for _, tt := range tests {
 		var err error
 		t.Run(tt.name, func(t *testing.T) {
 			defer func() { err = errors.Trap(err, recover()) }()
-			got := jsonListHelper.CreateList(tt.args...)
+			got := tomlListHelper.CreateList(tt.args...)
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.want.Cap(), got.Capacity())
 		})
@@ -213,14 +213,14 @@ func Test_list_Create(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonList
+		l    tomlList
 		args []int
-		want jsonIList
+		want tomlIList
 	}{
-		{"Empty", nil, nil, jsonList{}},
-		{"Existing List", jsonList{1, 2}, nil, jsonList{}},
-		{"With Empty spaces", jsonList{1, 2}, []int{5}, jsonList{nil, nil, nil, nil, nil}},
-		{"With Capacity", jsonList{1, 2}, []int{0, 5}, jsonListHelper.CreateList(0, 5)},
+		{"Empty", nil, nil, tomlList{}},
+		{"Existing List", tomlList{1, 2}, nil, tomlList{}},
+		{"With Empty spaces", tomlList{1, 2}, []int{5}, tomlList{nil, nil, nil, nil, nil}},
+		{"With Capacity", tomlList{1, 2}, []int{0, 5}, tomlListHelper.CreateList(0, 5)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -236,17 +236,17 @@ func Test_list_New(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonList
+		l    tomlList
 		args []interface{}
-		want jsonIList
+		want tomlIList
 	}{
-		{"Empty", nil, nil, jsonList{}},
-		{"Existing List", jsonList{1, 2}, nil, jsonList{}},
-		{"With elements", jsonList{1, 2}, []interface{}{3, 4, 5}, jsonList{3, 4, 5}},
-		{"With strings", jsonList{1, 2}, []interface{}{"Hello", "World"}, jsonList{"Hello", "World"}},
-		{"With nothing", jsonList{1, 2}, []interface{}{}, jsonList{}},
-		{"With nil", jsonList{1, 2}, nil, jsonList{}},
-		{"Adding array", jsonList{1, 2}, []interface{}{jsonList{3, 4}}, jsonList{3, 4}},
+		{"Empty", nil, nil, tomlList{}},
+		{"Existing List", tomlList{1, 2}, nil, tomlList{}},
+		{"With elements", tomlList{1, 2}, []interface{}{3, 4, 5}, tomlList{3, 4, 5}},
+		{"With strings", tomlList{1, 2}, []interface{}{"Hello", "World"}, tomlList{"Hello", "World"}},
+		{"With nothing", tomlList{1, 2}, []interface{}{}, tomlList{}},
+		{"With nil", tomlList{1, 2}, nil, tomlList{}},
+		{"Adding array", tomlList{1, 2}, []interface{}{tomlList{3, 4}}, tomlList{3, 4}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -260,13 +260,13 @@ func Test_list_CreateDict(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		l       jsonList
+		l       tomlList
 		args    []int
-		want    jsonIDict
+		want    tomlIDict
 		wantErr error
 	}{
-		{"Empty", nil, nil, jsonDict{}, nil},
-		{"With capacity", nil, []int{10}, jsonDict{}, nil},
+		{"Empty", nil, nil, tomlDict{}, nil},
+		{"With capacity", nil, []int{10}, tomlDict{}, nil},
 		{"With too much parameter", nil, []int{10, 1}, nil, fmt.Errorf("CreateList only accept 1 argument for size")},
 	}
 	for _, tt := range tests {
@@ -288,16 +288,16 @@ func Test_list_Contains(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonList
+		l    tomlList
 		args []interface{}
 		want bool
 	}{
 		{"Empty List", nil, []interface{}{}, false},
-		{"Search nothing", jsonList{1}, nil, true},
-		{"Search nothing 2", jsonList{1}, []interface{}{}, true},
-		{"Not there", jsonList{1}, []interface{}{2}, false},
-		{"Included", jsonList{1, 2}, []interface{}{2}, true},
-		{"Partially there", jsonList{1, 2}, []interface{}{2, 3}, false},
+		{"Search nothing", tomlList{1}, nil, true},
+		{"Search nothing 2", tomlList{1}, []interface{}{}, true},
+		{"Not there", tomlList{1}, []interface{}{2}, false},
+		{"Included", tomlList{1, 2}, []interface{}{2}, true},
+		{"Partially there", tomlList{1, 2}, []interface{}{2, 3}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -312,14 +312,14 @@ func Test_list_First_Last(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		l         jsonList
+		l         tomlList
 		wantFirst interface{}
 		wantLast  interface{}
 	}{
 		{"Nil", nil, nil, nil},
-		{"Empty", jsonList{}, nil, nil},
-		{"One element", jsonList{1}, 1, 1},
-		{"Many element ", jsonList{1, "two", 3.1415, "four"}, 1, "four"},
+		{"Empty", tomlList{}, nil, nil},
+		{"One element", tomlList{1}, 1, 1},
+		{"Many element ", tomlList{1, "two", 3.1415, "four"}, 1, "four"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -334,21 +334,21 @@ func Test_list_Pop(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		l        jsonList
+		l        tomlList
 		args     []int
 		want     interface{}
-		wantList jsonList
+		wantList tomlList
 	}{
-		{"Nil", nil, nil, nil, jsonList{}},
-		{"Empty", jsonList{}, nil, nil, jsonList{}},
-		{"Non existent", jsonList{}, []int{1}, nil, jsonList{}},
-		{"Empty with args", jsonList{}, []int{1, 3}, jsonList{nil, nil}, jsonList{}},
-		{"List with bad index", jsonList{0, 1, 2, 3, 4, 5}, []int{1, 3, 8}, jsonList{1, 3, nil}, jsonList{0, 2, 4, 5}},
-		{"Pop last element", jsonList{0, 1, 2, 3, 4, 5}, nil, 5, jsonList{0, 1, 2, 3, 4}},
-		{"Pop before last", jsonList{0, 1, 2, 3, 4, 5}, []int{-2}, 4, jsonList{0, 1, 2, 3, 5}},
-		{"Pop first element", jsonList{0, 1, 2, 3, 4, 5}, []int{0}, 0, jsonList{1, 2, 3, 4, 5}},
-		{"Pop all", jsonList{0, 1, 2, 3}, []int{0, 1, 2, 3}, jsonList{0, 1, 2, 3}, jsonList{}},
-		{"Pop same element many time", jsonList{0, 1, 2, 3}, []int{1, 1, 2, 2}, jsonList{1, 1, 2, 2}, jsonList{0, 3}},
+		{"Nil", nil, nil, nil, tomlList{}},
+		{"Empty", tomlList{}, nil, nil, tomlList{}},
+		{"Non existent", tomlList{}, []int{1}, nil, tomlList{}},
+		{"Empty with args", tomlList{}, []int{1, 3}, tomlList{nil, nil}, tomlList{}},
+		{"List with bad index", tomlList{0, 1, 2, 3, 4, 5}, []int{1, 3, 8}, tomlList{1, 3, nil}, tomlList{0, 2, 4, 5}},
+		{"Pop last element", tomlList{0, 1, 2, 3, 4, 5}, nil, 5, tomlList{0, 1, 2, 3, 4}},
+		{"Pop before last", tomlList{0, 1, 2, 3, 4, 5}, []int{-2}, 4, tomlList{0, 1, 2, 3, 5}},
+		{"Pop first element", tomlList{0, 1, 2, 3, 4, 5}, []int{0}, 0, tomlList{1, 2, 3, 4, 5}},
+		{"Pop all", tomlList{0, 1, 2, 3}, []int{0, 1, 2, 3}, tomlList{0, 1, 2, 3}, tomlList{}},
+		{"Pop same element many time", tomlList{0, 1, 2, 3}, []int{1, 1, 2, 2}, tomlList{1, 1, 2, 2}, tomlList{0, 3}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -364,17 +364,17 @@ func Test_list_Intersect(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonList
+		l    tomlList
 		args []interface{}
-		want jsonList
+		want tomlList
 	}{
-		{"Empty List", nil, []interface{}{}, jsonList{}},
-		{"Intersect nothing", jsonList{1}, nil, jsonList{}},
-		{"Intersect nothing 2", jsonList{1}, []interface{}{}, jsonList{}},
-		{"Not there", jsonList{1}, []interface{}{2}, jsonList{}},
-		{"Included", jsonList{1, 2}, []interface{}{2}, jsonList{2}},
-		{"Partially there", jsonList{1, 2}, []interface{}{2, 3}, jsonList{2}},
-		{"With duplicates", jsonList{1, 2, 3, 4, 5, 4, 3, 2, 1}, []interface{}{3, 4, 5, 6, 7, 8, 7, 6, 5, 5, 4, 3}, jsonList{3, 4, 5}},
+		{"Empty List", nil, []interface{}{}, tomlList{}},
+		{"Intersect nothing", tomlList{1}, nil, tomlList{}},
+		{"Intersect nothing 2", tomlList{1}, []interface{}{}, tomlList{}},
+		{"Not there", tomlList{1}, []interface{}{2}, tomlList{}},
+		{"Included", tomlList{1, 2}, []interface{}{2}, tomlList{2}},
+		{"Partially there", tomlList{1, 2}, []interface{}{2, 3}, tomlList{2}},
+		{"With duplicates", tomlList{1, 2, 3, 4, 5, 4, 3, 2, 1}, []interface{}{3, 4, 5, 6, 7, 8, 7, 6, 5, 5, 4, 3}, tomlList{3, 4, 5}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -388,17 +388,17 @@ func Test_list_Union(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonList
+		l    tomlList
 		args []interface{}
-		want jsonList
+		want tomlList
 	}{
-		{"Empty List", nil, []interface{}{}, jsonList{}},
-		{"Intersect nothing", jsonList{1}, nil, jsonList{1}},
-		{"Intersect nothing 2", jsonList{1}, []interface{}{}, jsonList{1}},
-		{"Not there", jsonList{1}, []interface{}{2}, jsonList{1, 2}},
-		{"Included", jsonList{1, 2}, []interface{}{2}, jsonList{1, 2}},
-		{"Partially there", jsonList{1, 2}, []interface{}{2, 3}, jsonList{1, 2, 3}},
-		{"With duplicates", jsonList{1, 2, 3, 4, 5, 4, 3, 2, 1}, []interface{}{8, 7, 6, 5, 6, 7, 8}, jsonList{1, 2, 3, 4, 5, 8, 7, 6}},
+		{"Empty List", nil, []interface{}{}, tomlList{}},
+		{"Intersect nothing", tomlList{1}, nil, tomlList{1}},
+		{"Intersect nothing 2", tomlList{1}, []interface{}{}, tomlList{1}},
+		{"Not there", tomlList{1}, []interface{}{2}, tomlList{1, 2}},
+		{"Included", tomlList{1, 2}, []interface{}{2}, tomlList{1, 2}},
+		{"Partially there", tomlList{1, 2}, []interface{}{2, 3}, tomlList{1, 2, 3}},
+		{"With duplicates", tomlList{1, 2, 3, 4, 5, 4, 3, 2, 1}, []interface{}{8, 7, 6, 5, 6, 7, 8}, tomlList{1, 2, 3, 4, 5, 8, 7, 6}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -412,16 +412,16 @@ func Test_list_Without(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonList
+		l    tomlList
 		args []interface{}
-		want jsonList
+		want tomlList
 	}{
-		{"Empty List", nil, []interface{}{}, jsonList{}},
-		{"Remove nothing", jsonList{1}, nil, jsonList{1}},
-		{"Remove nothing 2", jsonList{1}, []interface{}{}, jsonList{1}},
-		{"Not there", jsonList{1}, []interface{}{2}, jsonList{1}},
-		{"Included", jsonList{1, 2}, []interface{}{2}, jsonList{1}},
-		{"Partially there", jsonList{1, 2}, []interface{}{2, 3}, jsonList{1}},
+		{"Empty List", nil, []interface{}{}, tomlList{}},
+		{"Remove nothing", tomlList{1}, nil, tomlList{1}},
+		{"Remove nothing 2", tomlList{1}, []interface{}{}, tomlList{1}},
+		{"Not there", tomlList{1}, []interface{}{2}, tomlList{1}},
+		{"Included", tomlList{1, 2}, []interface{}{2}, tomlList{1}},
+		{"Partially there", tomlList{1, 2}, []interface{}{2, 3}, tomlList{1}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -435,13 +435,13 @@ func Test_list_Unique(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonList
-		want jsonList
+		l    tomlList
+		want tomlList
 	}{
-		{"Empty List", nil, jsonList{}},
-		{"Remove nothing", jsonList{1}, jsonList{1}},
-		{"Duplicates following", jsonList{1, 1, 2, 3}, jsonList{1, 2, 3}},
-		{"Duplicates not following", jsonList{1, 2, 3, 1, 2, 3, 4}, jsonList{1, 2, 3, 4}},
+		{"Empty List", nil, tomlList{}},
+		{"Remove nothing", tomlList{1}, tomlList{1}},
+		{"Duplicates following", tomlList{1, 1, 2, 3}, tomlList{1, 2, 3}},
+		{"Duplicates not following", tomlList{1, 2, 3, 1, 2, 3, 4}, tomlList{1, 2, 3, 4}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -455,12 +455,12 @@ func Test_list_Reverse(t *testing.T) {
 
 	tests := []struct {
 		name string
-		l    jsonList
-		want jsonIList
+		l    tomlList
+		want tomlIList
 	}{
-		{"Empty List", jsonList{}, jsonList{}},
-		{"List of int", jsonList{1, 2, 3}, jsonList{3, 2, 1}},
-		{"List of string", strFixture, jsonList{"Bar!", "Foo", "I'm", "World,", "Hello"}},
+		{"Empty List", tomlList{}, tomlList{}},
+		{"List of int", tomlList{1, 2, 3}, tomlList{3, 2, 1}},
+		{"List of string", strFixture, tomlList{"Bar!", "Foo", "I'm", "World,", "Hello"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -478,15 +478,15 @@ func Test_list_Set(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		l       jsonIList
+		l       tomlIList
 		args    args
-		want    jsonIList
+		want    tomlIList
 		wantErr error
 	}{
-		{"Empty", jsonList{}, args{2, 1}, jsonList{nil, nil, 1}, nil},
-		{"List of int", jsonList{1, 2, 3}, args{0, 10}, jsonList{10, 2, 3}, nil},
-		{"List of string", strFixture, args{2, "You're"}, jsonList{"Hello", "World,", "You're", "Foo", "Bar!"}, nil},
-		{"Negative", jsonList{}, args{-1, "negative value"}, nil, fmt.Errorf("index must be positive number")},
+		{"Empty", tomlList{}, args{2, 1}, tomlList{nil, nil, 1}, nil},
+		{"List of int", tomlList{1, 2, 3}, args{0, 10}, tomlList{10, 2, 3}, nil},
+		{"List of string", strFixture, args{2, "You're"}, tomlList{"Hello", "World,", "You're", "Foo", "Bar!"}, nil},
+		{"Negative", tomlList{}, args{-1, "negative value"}, nil, fmt.Errorf("index must be positive number")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -517,9 +517,9 @@ var mapFixture = map[string]interface{}{
 	},
 }
 
-var dictFixture = jsonDict(jsonDictHelper.AsDictionary(mapFixture).AsMap())
+var dictFixture = tomlDict(tomlDictHelper.AsDictionary(mapFixture).AsMap())
 
-func dumpKeys(t *testing.T, d1, d2 jsonIDict) {
+func dumpKeys(t *testing.T, d1, d2 tomlIDict) {
 	for key := range d1.AsMap() {
 		v1, v2 := d1.Get(key), d2.Get(key)
 		if reflect.DeepEqual(v1, v2) {
@@ -534,11 +534,11 @@ func Test_dict_AsMap(t *testing.T) {
 
 	tests := []struct {
 		name string
-		d    jsonDict
+		d    tomlDict
 		want map[string]interface{}
 	}{
 		{"Nil", nil, nil},
-		{"Empty", jsonDict{}, map[string]interface{}{}},
+		{"Empty", tomlDict{}, map[string]interface{}{}},
 		{"Map", dictFixture, map[string]interface{}(dictFixture)},
 	}
 	for _, tt := range tests {
@@ -553,14 +553,14 @@ func Test_dict_Clone(t *testing.T) {
 
 	tests := []struct {
 		name string
-		d    jsonDict
+		d    tomlDict
 		keys []interface{}
-		want jsonIDict
+		want tomlIDict
 	}{
-		{"Nil", nil, nil, jsonDict{}},
-		{"Empty", jsonDict{}, nil, jsonDict{}},
+		{"Nil", nil, nil, tomlDict{}},
+		{"Empty", tomlDict{}, nil, tomlDict{}},
 		{"Map", dictFixture, nil, dictFixture},
-		{"Map with Fields", dictFixture, []interface{}{"int", "list"}, jsonDict(dictFixture).Omit("float", "string", "listInt", "map", "mapInt")},
+		{"Map with Fields", dictFixture, []interface{}{"int", "list"}, tomlDict(dictFixture).Omit("float", "string", "listInt", "map", "mapInt")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -579,23 +579,23 @@ func Test_dict_Clone(t *testing.T) {
 	}
 }
 
-func Test_JsonDict_CreateList(t *testing.T) {
+func Test_TomlDict_CreateList(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name         string
-		d            jsonDict
+		d            tomlDict
 		args         []int
-		want         jsonIList
+		want         tomlIList
 		wantLen      int
 		wantCapacity int
 	}{
-		{"Nil", nil, nil, jsonList{}, 0, 0},
-		{"Empty", jsonDict{}, nil, jsonList{}, 0, 0},
-		{"Map", dictFixture, nil, jsonList{}, 0, 0},
-		{"Map with size", dictFixture, []int{3}, jsonList{nil, nil, nil}, 3, 3},
-		{"Map with capacity", dictFixture, []int{0, 10}, jsonList{}, 0, 10},
-		{"Map with size&capacity", dictFixture, []int{3, 10}, jsonList{nil, nil, nil}, 3, 10},
+		{"Nil", nil, nil, tomlList{}, 0, 0},
+		{"Empty", tomlDict{}, nil, tomlList{}, 0, 0},
+		{"Map", dictFixture, nil, tomlList{}, 0, 0},
+		{"Map with size", dictFixture, []int{3}, tomlList{nil, nil, nil}, 3, 3},
+		{"Map with capacity", dictFixture, []int{0, 10}, tomlList{}, 0, 10},
+		{"Map with size&capacity", dictFixture, []int{3, 10}, tomlList{nil, nil, nil}, 3, 10},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -612,13 +612,13 @@ func Test_dict_Create(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		d       jsonDict
+		d       tomlDict
 		args    []int
-		want    jsonIDict
+		want    tomlIDict
 		wantErr error
 	}{
-		{"Empty", nil, nil, jsonDict{}, nil},
-		{"With capacity", nil, []int{10}, jsonDict{}, nil},
+		{"Empty", nil, nil, tomlDict{}, nil},
+		{"With capacity", nil, []int{10}, tomlDict{}, nil},
 		{"With too much parameter", nil, []int{10, 1}, nil, fmt.Errorf("CreateList only accept 1 argument for size")},
 	}
 	for _, tt := range tests {
@@ -644,7 +644,7 @@ func Test_dict_Default(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		d    jsonDict
+		d    tomlDict
 		args args
 		want interface{}
 	}{
@@ -669,12 +669,12 @@ func Test_dict_Delete(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		d       jsonDict
+		d       tomlDict
 		args    args
-		want    jsonIDict
+		want    tomlIDict
 		wantErr error
 	}{
-		{"Empty", nil, args{}, jsonDict{}, fmt.Errorf("key <nil> not found")},
+		{"Empty", nil, args{}, tomlDict{}, fmt.Errorf("key <nil> not found")},
 		{"Map", dictFixture, args{}, dictFixture, fmt.Errorf("key <nil> not found")},
 		{"Non existant key", dictFixture, args{"Test", nil}, dictFixture, fmt.Errorf("key Test not found")},
 		{"Map with keys", dictFixture, args{"int", []interface{}{"list"}}, dictFixture.Clone("float", "string", "listInt", "map", "mapInt"), nil},
@@ -698,12 +698,12 @@ func Test_dict_Flush(t *testing.T) {
 
 	tests := []struct {
 		name string
-		d    jsonDict
+		d    tomlDict
 		keys []interface{}
-		want jsonIDict
+		want tomlIDict
 	}{
-		{"Empty", nil, nil, jsonDict{}},
-		{"Map", dictFixture, nil, jsonDict{}},
+		{"Empty", nil, nil, tomlDict{}},
+		{"Map", dictFixture, nil, tomlDict{}},
 		{"Non existant key", dictFixture, []interface{}{"Test"}, dictFixture},
 		{"Map with keys", dictFixture, []interface{}{"int", "list"}, dictFixture.Clone("float", "string", "listInt", "map", "mapInt")},
 		{"Map with keys + non existant", dictFixture, []interface{}{"int", "list", "Test"}, dictFixture.Clone("float", "string", "listInt", "map", "mapInt")},
@@ -723,11 +723,11 @@ func Test_dict_Keys(t *testing.T) {
 
 	tests := []struct {
 		name string
-		d    jsonDict
-		want jsonIList
+		d    tomlDict
+		want tomlIList
 	}{
-		{"Empty", nil, jsonList{}},
-		{"Map", dictFixture, jsonList{str("float"), str("int"), str("list"), str("listInt"), str("map"), str("mapInt"), str("string")}},
+		{"Empty", nil, tomlList{}},
+		{"Map", dictFixture, tomlList{str("float"), str("int"), str("list"), str("listInt"), str("map"), str("mapInt"), str("string")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -741,7 +741,7 @@ func Test_dict_KeysAsString(t *testing.T) {
 
 	tests := []struct {
 		name string
-		d    jsonDict
+		d    tomlDict
 		want strArray
 	}{
 		{"Empty", nil, strArray{}},
@@ -757,12 +757,12 @@ func Test_dict_KeysAsString(t *testing.T) {
 func Test_dict_Merge(t *testing.T) {
 	t.Parallel()
 
-	adding1 := jsonDict{
+	adding1 := tomlDict{
 		"int":        1000,
 		"Add1Int":    1,
 		"Add1String": "string",
 	}
-	adding2 := jsonDict{
+	adding2 := tomlDict{
 		"Add2Int":    1,
 		"Add2String": "string",
 		"map": map[string]interface{}{
@@ -771,27 +771,27 @@ func Test_dict_Merge(t *testing.T) {
 		},
 	}
 	type args struct {
-		jsonDict jsonIDict
-		dicts    []jsonIDict
+		tomlDict tomlIDict
+		dicts    []tomlIDict
 	}
 	tests := []struct {
 		name string
-		d    jsonDict
+		d    tomlDict
 		args args
-		want jsonIDict
+		want tomlIDict
 	}{
-		{"Empty", nil, args{nil, []jsonIDict{}}, jsonDict{}},
-		{"Add map to empty", nil, args{dictFixture, []jsonIDict{}}, dictFixture},
-		{"Add map to same map", dictFixture, args{dictFixture, []jsonIDict{}}, dictFixture},
-		{"Add empty to map", dictFixture, args{nil, []jsonIDict{}}, dictFixture},
-		{"Add new1 to map", dictFixture, args{adding1, []jsonIDict{}}, dictFixture.Clone().Merge(adding1)},
-		{"Add new2 to map", dictFixture, args{adding2, []jsonIDict{}}, dictFixture.Clone().Merge(adding2)},
-		{"Add new1 & new2 to map", dictFixture, args{adding1, []jsonIDict{adding2}}, dictFixture.Clone().Merge(adding1, adding2)},
-		{"Add new1 & new2 to map", dictFixture, args{adding1, []jsonIDict{adding2}}, dictFixture.Clone().Merge(adding1).Merge(adding2)},
+		{"Empty", nil, args{nil, []tomlIDict{}}, tomlDict{}},
+		{"Add map to empty", nil, args{dictFixture, []tomlIDict{}}, dictFixture},
+		{"Add map to same map", dictFixture, args{dictFixture, []tomlIDict{}}, dictFixture},
+		{"Add empty to map", dictFixture, args{nil, []tomlIDict{}}, dictFixture},
+		{"Add new1 to map", dictFixture, args{adding1, []tomlIDict{}}, dictFixture.Clone().Merge(adding1)},
+		{"Add new2 to map", dictFixture, args{adding2, []tomlIDict{}}, dictFixture.Clone().Merge(adding2)},
+		{"Add new1 & new2 to map", dictFixture, args{adding1, []tomlIDict{adding2}}, dictFixture.Clone().Merge(adding1, adding2)},
+		{"Add new1 & new2 to map", dictFixture, args{adding1, []tomlIDict{adding2}}, dictFixture.Clone().Merge(adding1).Merge(adding2)},
 	}
 	for _, tt := range tests {
 		go t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, tt.d.Clone().Merge(tt.args.jsonDict, tt.args.dicts...))
+			assert.Equal(t, tt.want, tt.d.Clone().Merge(tt.args.tomlDict, tt.args.dicts...))
 		})
 	}
 }
@@ -801,11 +801,11 @@ func Test_dict_Values(t *testing.T) {
 
 	tests := []struct {
 		name string
-		d    jsonDict
-		want jsonIList
+		d    tomlDict
+		want tomlIList
 	}{
-		{"Empty", nil, jsonList{}},
-		{"Map", dictFixture, jsonList{1.23, 123, jsonList{1, "two"}, jsonList{1, 2, 3}, jsonDict{"sub1": 1, "sub2": "two"}, jsonDict{"1": 1, "2": "two"}, "Foo bar"}},
+		{"Empty", nil, tomlList{}},
+		{"Map", dictFixture, tomlList{1.23, 123, tomlList{1, "two"}, tomlList{1, 2, 3}, tomlDict{"sub1": 1, "sub2": "two"}, tomlDict{"1": 1, "2": "two"}, "Foo bar"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -819,15 +819,15 @@ func Test_dict_Pop(t *testing.T) {
 
 	tests := []struct {
 		name       string
-		d          jsonDict
+		d          tomlDict
 		args       []interface{}
 		want       interface{}
-		wantObject jsonIDict
+		wantObject tomlIDict
 	}{
 		{"Nil", dictFixture, nil, nil, dictFixture},
 		{"Pop one element", dictFixture, []interface{}{"float"}, 1.23, dictFixture.Omit("float")},
 		{"Pop missing element", dictFixture, []interface{}{"undefined"}, nil, dictFixture},
-		{"Pop element twice", dictFixture, []interface{}{"int", "int", "string"}, jsonList{123, 123, "Foo bar"}, dictFixture.Omit("int", "string")},
+		{"Pop element twice", dictFixture, []interface{}{"int", "int", "string"}, tomlList{123, 123, "Foo bar"}, dictFixture.Omit("int", "string")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -847,14 +847,14 @@ func Test_dict_Add(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		d    jsonDict
+		d    tomlDict
 		args args
-		want jsonIDict
+		want tomlIDict
 	}{
-		{"Empty", nil, args{"A", 1}, jsonDict{"A": 1}},
-		{"With element", jsonDict{"A": 1}, args{"A", 2}, jsonDict{"A": jsonList{1, 2}}},
-		{"With element, another value", jsonDict{"A": 1}, args{"B", 2}, jsonDict{"A": 1, "B": 2}},
-		{"With list element", jsonDict{"A": jsonList{1, 2}}, args{"A", 3}, jsonDict{"A": jsonList{1, 2, 3}}},
+		{"Empty", nil, args{"A", 1}, tomlDict{"A": 1}},
+		{"With element", tomlDict{"A": 1}, args{"A", 2}, tomlDict{"A": tomlList{1, 2}}},
+		{"With element, another value", tomlDict{"A": 1}, args{"B", 2}, tomlDict{"A": 1, "B": 2}},
+		{"With list element", tomlDict{"A": tomlList{1, 2}}, args{"A", 3}, tomlDict{"A": tomlList{1, 2, 3}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -872,13 +872,13 @@ func Test_dict_Set(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		d    jsonDict
+		d    tomlDict
 		args args
-		want jsonIDict
+		want tomlIDict
 	}{
-		{"Empty", nil, args{"A", 1}, jsonDict{"A": 1}},
-		{"With element", jsonDict{"A": 1}, args{"A", 2}, jsonDict{"A": 2}},
-		{"With element, another value", jsonDict{"A": 1}, args{"B", 2}, jsonDict{"A": 1, "B": 2}},
+		{"Empty", nil, args{"A", 1}, tomlDict{"A": 1}},
+		{"With element", tomlDict{"A": 1}, args{"A", 2}, tomlDict{"A": 2}},
+		{"With element, another value", tomlDict{"A": 1}, args{"B", 2}, tomlDict{"A": 1, "B": 2}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -892,14 +892,14 @@ func Test_dict_Transpose(t *testing.T) {
 
 	tests := []struct {
 		name string
-		d    jsonDict
-		want jsonIDict
+		d    tomlDict
+		want tomlIDict
 	}{
-		{"Empty", nil, jsonDict{}},
-		{"Base", jsonDict{"A": 1}, jsonDict{"1": str("A")}},
-		{"Multiple", jsonDict{"A": 1, "B": 2, "C": 1}, jsonDict{"1": jsonList{str("A"), str("C")}, "2": str("B")}},
-		{"List", jsonDict{"A": []int{1, 2, 3}, "B": 2, "C": 3}, jsonDict{"1": str("A"), "2": jsonList{str("A"), str("B")}, "3": jsonList{str("A"), str("C")}}},
-		{"Complex", jsonDict{"A": jsonDict{"1": 1, "2": 2}, "B": 2, "C": 3}, jsonDict{"2": str("B"), "3": str("C"), fmt.Sprint(jsonDict{"1": 1, "2": 2}): str("A")}},
+		{"Empty", nil, tomlDict{}},
+		{"Base", tomlDict{"A": 1}, tomlDict{"1": str("A")}},
+		{"Multiple", tomlDict{"A": 1, "B": 2, "C": 1}, tomlDict{"1": tomlList{str("A"), str("C")}, "2": str("B")}},
+		{"List", tomlDict{"A": []int{1, 2, 3}, "B": 2, "C": 3}, tomlDict{"1": str("A"), "2": tomlList{str("A"), str("B")}, "3": tomlList{str("A"), str("C")}}},
+		{"Complex", tomlDict{"A": tomlDict{"1": 1, "2": 2}, "B": 2, "C": 3}, tomlDict{"2": str("B"), "3": str("C"), fmt.Sprint(tomlDict{"1": 1, "2": 2}): str("A")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -908,13 +908,13 @@ func Test_dict_Transpose(t *testing.T) {
 	}
 }
 
-func Test_JsonList_Get(t *testing.T) {
+func Test_TomlList_Get(t *testing.T) {
 	type args struct {
 		indexes []int
 	}
 	tests := []struct {
 		name string
-		l    jsonList
+		l    tomlList
 		args args
 		want interface{}
 	}{
@@ -927,10 +927,10 @@ func Test_JsonList_Get(t *testing.T) {
 	}
 }
 
-func Test_JsonList_TypeName(t *testing.T) {
+func Test_TomlList_TypeName(t *testing.T) {
 	tests := []struct {
 		name string
-		l    jsonList
+		l    tomlList
 		want str
 	}{
 		// TODO: Add test cases.
@@ -942,20 +942,20 @@ func Test_JsonList_TypeName(t *testing.T) {
 	}
 }
 
-func Test_Json_TypeName(t *testing.T) {
-	t.Run("list", func(t *testing.T) { assert.Equal(t, jsonList{}.TypeName(), str("Json")) })
-	t.Run("dict", func(t *testing.T) { assert.Equal(t, jsonDict{}.TypeName(), str("Json")) })
+func Test_Toml_TypeName(t *testing.T) {
+	t.Run("list", func(t *testing.T) { assert.Equal(t, tomlList{}.TypeName(), str("Toml")) })
+	t.Run("dict", func(t *testing.T) { assert.Equal(t, tomlDict{}.TypeName(), str("Toml")) })
 }
 
-func Test_Json_GetHelper(t *testing.T) {
+func Test_Toml_GetHelper(t *testing.T) {
 	t.Run("list", func(t *testing.T) {
-		gotD, gotL := jsonList{}.GetHelpers()
-		assert.Equal(t, gotD.CreateDictionary().TypeName(), jsonDictHelper.CreateDictionary().TypeName())
-		assert.Equal(t, gotL.CreateList().TypeName(), jsonListHelper.CreateList().TypeName())
+		gotD, gotL := tomlList{}.GetHelpers()
+		assert.Equal(t, gotD.CreateDictionary().TypeName(), tomlDictHelper.CreateDictionary().TypeName())
+		assert.Equal(t, gotL.CreateList().TypeName(), tomlListHelper.CreateList().TypeName())
 	})
 	t.Run("dict", func(t *testing.T) {
-		gotD, gotL := jsonDict{}.GetHelpers()
-		assert.Equal(t, gotD.CreateDictionary().TypeName(), jsonDictHelper.CreateDictionary().TypeName())
-		assert.Equal(t, gotL.CreateList().TypeName(), jsonListHelper.CreateList().TypeName())
+		gotD, gotL := tomlDict{}.GetHelpers()
+		assert.Equal(t, gotD.CreateDictionary().TypeName(), tomlDictHelper.CreateDictionary().TypeName())
+		assert.Equal(t, gotL.CreateList().TypeName(), tomlListHelper.CreateList().TypeName())
 	})
 }
