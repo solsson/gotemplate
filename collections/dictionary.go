@@ -20,7 +20,7 @@ type IDictionary interface {
 	GetKeys() IGenericList                                   // Returns the keys in the dictionary in alphabetical order.
 	GetValues() IGenericList                                 // Returns the values in the dictionary in alphabetical order of keys.
 	Has(...interface{}) bool                                 // Returns true if the dictionary object contains all the key.
-	KeysAsString() StringArray                               // Returns the keys in the dictionary in alphabetical order.
+	KeysAsString() strArray                                  // Returns the keys in the dictionary in alphabetical order.
 	Len() int                                                // Returns the number of keys in the dictionary.
 	Merge(IDictionary, ...IDictionary) IDictionary           // Merges the other dictionaries into the current dictionary.
 	Native() interface{}                                     // Returns the object casted as native go type (applied recursively).
@@ -30,7 +30,7 @@ type IDictionary interface {
 	Set(key, value interface{}) IDictionary                  // Sets key to value in the dictionary.
 	String() string                                          // Returns the string representation of the dictionary.
 	Transpose() IDictionary                                  // Transpose keys/values and return the resulting dictionary
-	TypeName() String                                        // Returns the actual type name
+	TypeName() str                                           // Returns the actual type name
 }
 
 // IDictionaryHelper represents objects that implement IDictionary compatible objects

@@ -106,8 +106,8 @@ func (dh DictHelper) GetKeys(dict baseIDict) baseIList {
 }
 
 // KeysAsString returns the keys in the dictionary in alphabetical order.
-func (dh DictHelper) KeysAsString(dict baseIDict) collections.StringArray {
-	keys := make(collections.StringArray, 0, dict.Len())
+func (dh DictHelper) KeysAsString(dict baseIDict) strArray {
+	keys := make(strArray, 0, dict.Len())
 	for key := range dict.AsMap() {
 		keys = append(keys, str(key))
 	}

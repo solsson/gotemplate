@@ -8,8 +8,8 @@ import (
 
 func autoWrap(repl replacement, match string) string {
 	matches, _ := utils.MultiMatch(match, repl.re)
-	before := String(matches["before"])
-	context := String(matches["context"])
+	before := str(matches["before"])
+	context := str(matches["context"])
 	context, strings := context.Protect()
 	args := context.SelectContext(1, "(", ")")
 	if args == "" {

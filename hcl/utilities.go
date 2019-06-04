@@ -70,7 +70,7 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 		return
 	}
 
-	ifIndent := func(vTrue, vFalse interface{}) interface{} { return collections.IIf(indent, vTrue, vFalse) }
+	ifIndent := func(vTrue, vFalse string) string { return collections.IIf(indent, vTrue, vFalse).(string) }
 	const specialFormat = "#HCL_ARRAY_MAP#!"
 
 	switch value := value.(type) {
@@ -80,15 +80,15 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 		value = fmt.Sprintf("%q", value)
 		if indent != "" && strings.Contains(value, "\\n") {
 			// We unquote the value
-			unIndented := value[1 : len(value)-1]
+			unIndented := str(value[1 : len(value)-1])
 			// Then replace escaped characters, other escape chars are \a, \b, \f and \v are not managed
-			unIndented = strings.Replace(unIndented, `\n`, "\n", -1)
-			unIndented = strings.Replace(unIndented, `\\`, "\\", -1)
-			unIndented = strings.Replace(unIndented, `\"`, "\"", -1)
-			unIndented = strings.Replace(unIndented, `\r`, "\r", -1)
-			unIndented = strings.Replace(unIndented, `\t`, "\t", -1)
-			unIndented = collections.UnIndent(unIndented)
-			if strings.HasSuffix(unIndented, "\n") {
+			unIndented = unIndented.Replace(`\n`, "\n")
+			unIndented = unIndented.Replace(`\\`, "\\")
+			unIndented = unIndented.Replace(`\"`, "\"")
+			unIndented = unIndented.Replace(`\r`, "\r")
+			unIndented = unIndented.Replace(`\t`, "\t")
+			unIndented = unIndented.UnIndent()
+			if unIndented.HasSuffix("\n") {
 				value = fmt.Sprintf("<<-EOF\n%sEOF", unIndented)
 			}
 		}
@@ -110,7 +110,7 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 					}
 				}
 			}
-			result = strings.Join(results, ifIndent("\n\n", " ").(string))
+			result = strings.Join(results, ifIndent("\n\n", " "))
 			break
 		}
 		var totalLength int
@@ -123,9 +123,9 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 			newLine = newLine || strings.Contains(results[i], "\n")
 		}
 		if totalLength > 60 && indent != "" || newLine {
-			result = fmt.Sprintf("[\n%s,\n]", collections.Indent(strings.Join(results, ",\n"), prefix+indent))
+			result = fmt.Sprintf("[\n%s,\n]", str(",\n").Join(results).Indent(prefix+indent))
 		} else {
-			result = fmt.Sprintf("[%s]", strings.Join(results, ifIndent(", ", ",").(string)))
+			result = fmt.Sprintf("[%s]", strings.Join(results, ifIndent(", ", ",")))
 		}
 
 	case map[string]interface{}:
@@ -175,7 +175,7 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 					keyLen = 0
 				}
 
-				equal := ifIndent(" = ", "=").(string)
+				equal := ifIndent(" = ", "=")
 				if _, err := hclHelper.TryAsDictionary(value[key]); err == nil {
 					if multiline {
 						equal = " "
@@ -200,7 +200,7 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 		}
 
 		if head {
-			result = strings.Join(items, ifIndent("\n", " ").(string))
+			result = strings.Join(items, ifIndent("\n", " "))
 			break
 		}
 
@@ -209,7 +209,7 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 			break
 		}
 
-		result = fmt.Sprintf("{\n%s\n}", collections.Indent(strings.Join(items, "\n"), prefix+indent))
+		result = fmt.Sprintf("{\n%s\n}", str("\n").Join(items).Indent(prefix+indent))
 
 	default:
 		debug.PrintStack()

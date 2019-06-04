@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/coveo/gotemplate/v3/collections"
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_list_String(t *testing.T) {
@@ -23,9 +24,7 @@ func Test_list_String(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.l.String(); got != tt.want {
-				t.Errorf("hclList.String() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.l.String())
 		})
 	}
 }
@@ -44,9 +43,7 @@ func Test_dict_String(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.d.String(); got != tt.want {
-				t.Errorf("hclList.String():\n got %v\nwant %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.d.String())
 		})
 	}
 }
@@ -98,9 +95,8 @@ func TestMarshalHCLVars(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			value := collections.ToNativeRepresentation(tt.args.value)
-			if got, _ := marshalHCL(value, true, true, "", tt.args.indent); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("MarshalHCLVars() =\n%v\n\nwant:\n%v", got, tt.want)
-			}
+			got, _ := marshalHCL(value, true, true, "", tt.args.indent)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

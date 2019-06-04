@@ -1,4 +1,4 @@
-package collections
+package strings
 
 import (
 	"fmt"
@@ -8,10 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/Masterminds/sprig"
-	"github.com/coveo/gotemplate/v3/errors"
 )
-
-var must = errors.Must
 
 // CenterString returns string s centered within width
 func CenterString(s string, width int) string {
@@ -136,6 +133,15 @@ func UnIndent(s string) string {
 
 	return strings.Join(lines, "\n")
 }
+
+// TrimmedString returns the string unindented and with spaces trimmed.
+func TrimmedString(s string) string { return String(s).Trimmed().Str() }
+
+// LeftTrimmedString returns the string unindented and with spaces trimmed.
+func LeftTrimmedString(s string) string { return String(s).LeftTrimmed().Str() }
+
+// RightTrimmedString returns the string unindented and with spaces trimmed.
+func RightTrimmedString(s string) string { return String(s).RightTrimmed().Str() }
 
 // Indent returns the indented version of the supplied string.
 func Indent(s, indent string) string {

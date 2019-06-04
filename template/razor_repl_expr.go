@@ -53,13 +53,13 @@ func expressionParserInternal(repl replacement, match string, skipError, interna
 		}
 
 		// We first protect strings declared in the expression
-		protected, includedStrings := String(expression).Protect()
+		protected, includedStrings := str(expression).Protect()
 
 		// We transform the expression into a valid go statement
 		for k, v := range map[string]string{"$": stringRep, "range": rangeExpr, "default": defaultExpr, "func": funcExpr, "...": ellipsisRep, "type": typeExpr, "map": mapExpr} {
 			protected = protected.Replace(k, v)
 		}
-		protected = String(dotPrefix.ReplaceAllString(protected.Str(), fmt.Sprintf("${prefix}%s${value}", dotRep)))
+		protected = str(dotPrefix.ReplaceAllString(protected.Str(), fmt.Sprintf("${prefix}%s${value}", dotRep)))
 		for k, v := range map[string]string{ellipsisRep: "...", "<>": "!=", "÷": "/", "≠": "!=", "≦": "<=", "≧": ">=", "«": "<<", "»": ">>"} {
 			protected = protected.Replace(k, v)
 		}
@@ -68,7 +68,7 @@ func expressionParserInternal(repl replacement, match string, skipError, interna
 			protected = protected.Replace(" "+val+" ", key)
 		}
 		// We add support to partial slice
-		protected = String(indexExpression(protected.Str()))
+		protected = str(indexExpression(protected.Str()))
 
 		// We restore the strings into the expression
 		expr = protected.RestoreProtected(includedStrings).Str()

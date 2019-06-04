@@ -54,16 +54,16 @@ func (t errorHandler) Handler(err error) (string, bool, error) {
 			parserBug = color.HiRedString("\nBad error line reported: check: https://github.com/golang/go/issues/27319")
 		}
 
-		currentLine := String(lines[faultyLine])
+		currentLine := str(lines[faultyLine])
 
 		if matches[tagFile] != t.Filename {
 			// An error occurred in an included external template file, we cannot try to recuperate
 			// and try to find further errors, so we just return the error.
 
 			if fileContent, err := ioutil.ReadFile(matches[tagFile]); err != nil {
-				currentLine = String(fmt.Sprintf("Unable to read file: %v", err))
+				currentLine = str(fmt.Sprintf("Unable to read file: %v", err))
 			} else {
-				currentLine = String(fileContent).Lines()[toInt(matches[tagLine])-1]
+				currentLine = str(fileContent).Lines()[toInt(matches[tagLine])-1]
 			}
 			return "", true, fmt.Errorf("%s %v in: %s", color.WhiteString(t.Filename), err, color.HiBlackString(currentLine.Str()))
 		}
@@ -76,12 +76,12 @@ func (t errorHandler) Handler(err error) (string, bool, error) {
 		var logMessage string
 		if key != "" {
 			// Missing key and we disabled the <no value> mode
-			context := String(currentLine).SelectContext(faultyColumn, t.LeftDelim(), t.RightDelim())
-			if subContext := String(currentLine).SelectContext(faultyColumn, "(", ")"); subContext != "" {
+			context := str(currentLine).SelectContext(faultyColumn, t.LeftDelim(), t.RightDelim())
+			if subContext := str(currentLine).SelectContext(faultyColumn, "(", ")"); subContext != "" {
 				// There is an sub-context, so we replace it first
 				context = subContext
 			}
-			current := String(currentLine).SelectWord(faultyColumn, ".", "_")
+			current := str(currentLine).SelectWord(faultyColumn, ".", "_")
 			newContext := context.Replace(current.Str(), undefError).Str()
 			newLine := currentLine.Replace(context.Str(), newContext)
 
@@ -127,7 +127,7 @@ func (t errorHandler) Handler(err error) (string, bool, error) {
 			lines[faultyLine] = fmt.Sprintf("ERROR %s", errText)
 		} else if code != "" {
 			logMessage = fmt.Sprintf("Execution error: %s", err)
-			context := String(currentLine).SelectContext(faultyColumn, t.LeftDelim(), t.RightDelim())
+			context := str(currentLine).SelectContext(faultyColumn, t.LeftDelim(), t.RightDelim())
 			errorText = fmt.Sprintf(color.RedString("%s (%s)", errText, code))
 			if context == "" {
 				// We have not been able to find the current context, we wipe the erroneous line

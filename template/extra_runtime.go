@@ -52,19 +52,19 @@ var runtimeFuncsHelp = descriptions{
 	"allFunctions":  "Returns the list of all available functions.",
 	"assert":        "Raises a formated error if the test condition is false.",
 	"assertWarning": "Issues a formated warning if the test condition is false.",
-	"categories": strings.TrimSpace(collections.UnIndent(`
+	"categories": ts(`
 		Returns all functions group by categories.
 
 		The returned value has the following properties:
 		    Name        string
 		    Functions    []string
-	`)),
+	`),
 	"current":  "Returns the current folder (like pwd, but returns the folder of the currently running folder).",
 	"ellipsis": "Returns the result of the function by expanding its last argument that must be an array into values. It's like calling function(arg1, arg2, otherArgs...).",
 	"exec":     "Returns the result of the shell command as structured data (as string if no other conversion is possible).",
 	"exit":     "Exits the current program execution.",
 	"func":     "Defines a function with the current context using the function (exec, run, include, template). Executed in the context of the caller.",
-	"function": strings.TrimSpace(collections.UnIndent(`
+	"function": ts(`
 		Returns the information relative to a specific function.
 
 		The returned value has the following properties:
@@ -75,7 +75,7 @@ var runtimeFuncsHelp = descriptions{
 		    Aliases     []string
 		    Arguments   string
 		    Result      string
-	`)),
+	`),
 	"functions":     "Returns the list of all available functions (excluding aliases).",
 	"getAttributes": "List all attributes accessible from the supplied object.",
 	"getMethods":    "List all methods signatures accessible from the supplied object.",
@@ -139,15 +139,15 @@ func (t *Template) defineFunc(name, function string, source, config interface{})
 }
 
 func (t *Template) execCommand(command interface{}, args ...interface{}) (interface{}, error) {
-	return t.exec(collections.Interface2string(command), args...)
+	return t.exec(i2s(command), args...)
 }
 
 func (t *Template) runCommand(command interface{}, args ...interface{}) (interface{}, error) {
-	return t.run(collections.Interface2string(command), args...)
+	return t.run(i2s(command), args...)
 }
 
 func (t *Template) include(source interface{}, context ...interface{}) (interface{}, error) {
-	content, _, err := t.runTemplate(collections.Interface2string(source), context...)
+	content, _, err := t.runTemplate(i2s(source), context...)
 	if source == content {
 		return nil, fmt.Errorf("Unable to find a template or a file named %s", source)
 	}
@@ -178,7 +178,7 @@ func (t *Template) addAlias(name, function string, source interface{}, local, co
 	if !context {
 		t.aliases[name] = FuncInfo{
 			function: func(args ...interface{}) (result interface{}, err error) {
-				return f(collections.Interface2string(source), append(defaultArgs, args...)...)
+				return f(i2s(source), append(defaultArgs, args...)...)
 			},
 			group: "User defined aliases",
 		}
@@ -302,7 +302,7 @@ func (t *Template) addAlias(name, function string, source interface{}, local, co
 				context.Set(fi.arguments[i], args[i])
 			}
 		}
-		return f(collections.Interface2string(source), context)
+		return f(i2s(source), context)
 	}
 
 	t.aliases[name] = fi

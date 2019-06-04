@@ -15,9 +15,6 @@ import (
 	logging "github.com/op/go-logging"
 )
 
-// String is an alias to collections.String
-type String = collections.String
-
 var templateMutex sync.Mutex
 
 // Template let us extend the functionalities of base go template library.
@@ -57,15 +54,8 @@ const (
 var (
 	// ExtensionDepth the depth level of search of gotemplate extension from the current directory (default = 2).
 	ExtensionDepth = 2
-	toStrings      = collections.ToStrings
-	acceptNoValue  = String(os.Getenv(EnvAcceptNoValue)).ParseBool()
-	strictError    = String(os.Getenv(EnvStrictErrorCheck)).ParseBool()
-	Print          = utils.ColorPrint
-	Printf         = utils.ColorPrintf
-	Println        = utils.ColorPrintln
-	ErrPrintf      = utils.ColorErrorPrintf
-	ErrPrintln     = utils.ColorErrorPrintln
-	ErrPrint       = utils.ColorErrorPrint
+	acceptNoValue  = str(os.Getenv(EnvAcceptNoValue)).ParseBool()
+	strictError    = str(os.Getenv(EnvStrictErrorCheck)).ParseBool()
 )
 
 // IsRazor determines if the supplied code appears to have Razor code (using default delimiters).

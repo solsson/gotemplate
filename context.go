@@ -35,7 +35,7 @@ func createContext(varsFiles []string, namedVars []string, mode string, ignoreMi
 		data := collections.CreateDictionary().AsMap()
 		if err := collections.ConvertData(namedVars[i], &data); err != nil {
 			var fd fileDef
-			fd.name, fd.value = collections.Split2(namedVars[i], "=")
+			fd.name, fd.value = split2(namedVars[i], "=")
 			if fd.value == "" {
 				fd = fileDef{"", fd.name, true}
 			}
@@ -45,7 +45,7 @@ func createContext(varsFiles []string, namedVars []string, mode string, ignoreMi
 		if len(data) == 0 && strings.Contains(namedVars[i], "=") {
 			// The hcl converter consider "value=" as an empty map instead of empty value in a map
 			// we handle it
-			name, value := collections.Split2(namedVars[i], "=")
+			name, value := split2(namedVars[i], "=")
 			data[name] = value
 		}
 		for key, value := range data {

@@ -2,6 +2,7 @@ package implementation
 
 import (
 	"github.com/coveo/gotemplate/v3/collections"
+	"github.com/coveo/gotemplate/v3/strings"
 )
 
 // ListTypeName implementation of IGenericList for baseList
@@ -131,8 +132,11 @@ var DictionaryHelper collections.IDictionaryHelper = baseDictHelper
 var GenericListHelper collections.IListHelper = baseListHelper
 
 type (
-	str      = collections.String
-	strArray = collections.StringArray
+	str      = strings.String
+	strArray = strings.StringArray
 )
 
-var iif = collections.IIf
+var (
+	iif = collections.IIf
+	ts  = strings.TrimmedString
+)

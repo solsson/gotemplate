@@ -98,7 +98,7 @@ func Color(attributes ...string) (*color.Color, error) {
 	var containsColor bool
 	var err errors.Array
 	for _, attr := range attributes {
-		for _, attr := range String(attr).FieldsID().Strings() {
+		for _, attr := range str(attr).FieldsID().Strings() {
 			if a, match := nameValues[strings.ToLower(attr)]; match {
 				result.Add(a)
 				containsColor = true

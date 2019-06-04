@@ -20,7 +20,7 @@ func assignExpressionAcceptError(repl replacement, match string) string {
 }
 
 // TODO: Deprecated, to remove in future version
-var deprecatedAssign = String(os.Getenv(EnvDeprecatedAssign)).ParseBool()
+var deprecatedAssign = str(os.Getenv(EnvDeprecatedAssign)).ParseBool()
 
 func assignExpressionInternal(repl replacement, match string, acceptError bool) string {
 	// TODO: Deprecated, to remove in future version

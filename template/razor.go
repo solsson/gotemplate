@@ -27,7 +27,7 @@ func (t *Template) applyRazor(content []byte) (result []byte, changed bool) {
 		}
 	}
 	content = []byte(strings.Replace(string(content), funcCall, "", -1))
-	log.Noticef("Generated content\n\n%s\n", color.HiCyanString(String(content).AddLineNumber(0).Str()))
+	log.Noticef("Generated content\n\n%s\n", color.HiCyanString(str(content).AddLineNumber(0).Str()))
 	return content, true
 }
 

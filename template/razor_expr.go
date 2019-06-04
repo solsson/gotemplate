@@ -8,7 +8,6 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/coveo/gotemplate/v3/collections"
 	"github.com/fatih/color"
 )
 
@@ -169,7 +168,7 @@ func nodeValueInternal(node ast.Node) (result string, err error) {
 	}
 
 	// if first, _ := collections.Split2(result, " "); !strings.HasPrefix(first, dotRep) || strings.Contains(first, funcCall) {
-	if first, _ := collections.Split2(result, " "); !(strings.HasPrefix(first, dotRep) && strings.Contains(first, funcCall)) {
+	if first, _ := split2(result, " "); !(strings.HasPrefix(first, dotRep) && strings.Contains(first, funcCall)) {
 		result = fmt.Sprintf("(%s)", result)
 	}
 	return

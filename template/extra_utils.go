@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/coveo/gotemplate/v3/collections"
 	"github.com/coveo/gotemplate/v3/utils"
@@ -17,18 +16,18 @@ const (
 var utilsFuncs = dictionary{
 	"center":     center,
 	"color":      utils.SprintColor,
-	"concat":     collections.Concat,
+	"concat":     concat,
 	"formatList": utils.FormatList,
 	"id":         id,
 	"iif":        collections.IIf,
-	"joinLines":  collections.JoinLines,
+	"joinLines":  join,
 	"lorem":      lorem,
 	"mergeList":  utils.MergeLists,
 	"repeat":     repeat,
 	"indent":     indent,
 	"nIndent":    nIndent,
 	"sIndent":    sIndent,
-	"splitLines": collections.SplitLines,
+	"splitLines": split,
 	"wrap":       wrap,
 }
 
@@ -62,7 +61,7 @@ var utilsFuncsAliases = aliases{
 
 var utilsFuncsHelp = descriptions{
 	"center": "Returns the concatenation of supplied arguments centered within width.",
-	"color": strings.TrimSpace(collections.UnIndent(`
+	"color": ts(`
 		Colors the rendered string.
 
 		The first arguments are interpretated as color attributes until the first non color attribute. Attributes are case insensitive.
@@ -78,9 +77,9 @@ var utilsFuncsHelp = descriptions{
 		    FgHi: Meaning high intensity forground
 		    Bg:   Meaning background"
 		    BgHi: Meaning high intensity background
-	`)),
+	`),
 	"concat": "Returns the concatenation (without separator) of the string representation of objects.",
-	"formatList": strings.TrimSpace(collections.UnIndent(`
+	"formatList": ts(`
 		Return a list of strings by applying the format to each element of the supplied list.
 
 		You can also use autoWrap as Razor expression if you don't want to specify the format.
@@ -89,7 +88,7 @@ var utilsFuncsHelp = descriptions{
 
 		Ex:
 		    Hello @<autoWrap(to(10)) World!
-	`)),
+	`),
 	"id":        "Returns a valid go identifier from the supplied string (replacing any non compliant character by replacement, default _ ).",
 	"iif":       "If testValue is empty, returns falseValue, otherwise returns trueValue.\n    WARNING: All arguments are evaluated and must by valid.",
 	"indent":    "Indents every line in a given string to the specified indent width. This is useful when aligning multi-line strings.",
@@ -98,13 +97,13 @@ var utilsFuncsHelp = descriptions{
 	"mergeList": "Return a single list containing all elements from the lists supplied.",
 	"nindent":   "Work as indent but add a newline before.",
 	"repeat":    "Returns an array with the item repeated n times.",
-	"sIndent": strings.TrimSpace(collections.UnIndent(`
+	"sIndent": ts(`
 		Indents the elements using the provided spacer.
 		
 		You can also use autoIndent as Razor expression if you don't want to specify the spacer.
 		Spacer will then be auto determined by the spaces that precede the expression.
 		Valid aliases for autoIndent are: aIndent, aindent.
-	`)),
+	`),
 	"splitLines": "Returns a list of strings from the supplied object with newline as the separator.",
 	"wrap":       "Wraps the rendered arguments within width.",
 }
@@ -130,7 +129,7 @@ func center(width interface{}, args ...interface{}) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("width must be integer")
 	}
-	return collections.CenterString(utils.FormatMessage(args...), w), nil
+	return str(utils.FormatMessage(args...)).Center(w).Str(), nil
 }
 
 func wrap(width interface{}, args ...interface{}) (string, error) {
@@ -138,12 +137,12 @@ func wrap(width interface{}, args ...interface{}) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("width must be integer")
 	}
-	return collections.WrapString(utils.FormatMessage(args...), w), nil
+	return str(utils.FormatMessage(args...)).Wrap(w).Str(), nil
 }
 
 func indent(space int, args ...interface{}) string {
 	args = convertArgs(nil, args...).AsArray()
-	return collections.Indent(strings.Join(toStrings(args), "\n"), strings.Repeat(" ", space))
+	return str("\n").Join(toStrings(args)).IndentN(space).Str()
 }
 
 func nIndent(space int, args ...interface{}) string {
@@ -152,7 +151,7 @@ func nIndent(space int, args ...interface{}) string {
 
 func sIndent(spacer string, args ...interface{}) string {
 	args = convertArgs(nil, args...).AsArray()
-	return collections.Indent(strings.Join(toStrings(args), "\n"), spacer)
+	return str("\n").Join(toStrings(args)).Indent(spacer).Str()
 }
 
 func id(id string, replace ...interface{}) string {

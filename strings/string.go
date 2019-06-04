@@ -1,4 +1,4 @@
-package collections
+package strings
 
 import (
 	"fmt"
@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/coveo/gotemplate/v3/errors"
 )
 
 // String is an enhanced class implementation of the standard go string library.
@@ -76,7 +78,16 @@ func (s String) IndexRune(r rune) int { return strings.IndexRune(string(s), r) }
 // Join concatenates the elements of array to create a single string. The string
 // object is placed between elements in the resulting string.
 func (s String) Join(array ...interface{}) String {
-	return stringArray(ToStrings(array)).Join(string(s))
+	var strArray StringArray
+	if len(array) == 1 {
+		switch a := array[0].(type) {
+		case []interface{}:
+			strArray = stringArray(ToStrings(a))
+		case []string:
+			strArray = stringArray(a)
+		}
+	}
+	return strArray.Join(string(s))
 }
 
 // LastIndex returns the index of the last instance of substr in s, or -1 if substr is not present in s.
@@ -229,6 +240,15 @@ func (s String) Len() int { return len(s) }
 
 // Quote returns the string between quotes.
 func (s String) Quote() String { return String(fmt.Sprintf("%q", s)) }
+
+// Trimmed returns the string unindented and with spaces trimmed.
+func (s String) Trimmed() String { return s.UnIndent().TrimSpace() }
+
+// LeftTrimmed returns the string unindented and with left spaces trimmed.
+func (s String) LeftTrimmed() String { return s.UnIndent().TrimLeftFunc(unicode.IsSpace) }
+
+// RightTrimmed returns the string unindented and with right spaces trimmed.
+func (s String) RightTrimmed() String { return s.UnIndent().TrimRightFunc(unicode.IsSpace) }
 
 // Escape returns the representation of the string with escape characters.
 func (s String) Escape() String {
@@ -414,7 +434,7 @@ func (s String) Protect() (result String, array StringArray) {
 // RestoreProtected restores a string transformed by ProtectString to its original value.
 func (s String) RestoreProtected(array StringArray) String {
 	return String(replacementRegex.ReplaceAllStringFunc(s.Str(), func(match string) string {
-		index := must(strconv.Atoi(replacementRegex.FindStringSubmatch(match)[1])).(int)
+		index := errors.Must(strconv.Atoi(replacementRegex.FindStringSubmatch(match)[1])).(int)
 		return array[index].Str()
 	}))
 }

@@ -2,22 +2,25 @@ package tests
 
 import (
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/coveo/gotemplate/v3/collections"
 	impl "github.com/coveo/gotemplate/v3/collections/implementation"
 	"github.com/coveo/gotemplate/v3/hcl"
 	"github.com/coveo/gotemplate/v3/json"
+	"github.com/coveo/gotemplate/v3/strings"
 	"github.com/coveo/gotemplate/v3/yaml"
 )
 
 type dictionary = map[string]interface{}
 
-var hclHelper = hcl.DictionaryHelper
-var yamlHelper = yaml.DictionaryHelper
-var jsonHelper = json.DictionaryHelper
-var genHelper = impl.DictionaryHelper
+var (
+	hclHelper  = hcl.DictionaryHelper
+	yamlHelper = yaml.DictionaryHelper
+	jsonHelper = json.DictionaryHelper
+	genHelper  = impl.DictionaryHelper
+	ts         = strings.TrimmedString
+)
 
 func TestConvertData(t *testing.T) {
 	var out1 interface{}
@@ -78,7 +81,7 @@ func TestToBash(t *testing.T) {
 				"b": 2,
 			},
 			SS: SubStruct{64, "Foo"},
-		}, strings.TrimSpace(collections.UnIndent(`
+		}, ts(`
 		declare -a A
 		A=(1 2)
 		F=1.23
@@ -88,7 +91,8 @@ func TestToBash(t *testing.T) {
 		S=123
 		declare -A SS
 		SS=([I]=Foo [U]=64)
-		`))},
+		`),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

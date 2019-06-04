@@ -10,7 +10,6 @@ import (
 	"github.com/coveo/gotemplate/v3/collections"
 	"github.com/coveo/gotemplate/v3/hcl"
 	"github.com/coveo/gotemplate/v3/json"
-	"github.com/coveo/gotemplate/v3/utils"
 	"github.com/coveo/gotemplate/v3/xml"
 	"github.com/coveo/gotemplate/v3/yaml"
 )
@@ -241,8 +240,8 @@ func toChar(value interface{}) (r interface{}, err error) {
 	})
 }
 
-func toString(s interface{}) string            { return fmt.Sprint(s) }
-func toStringClass(s interface{}) utils.String { return utils.String(toString(s)) }
+func toString(s interface{}) string   { return fmt.Sprint(s) }
+func toStringClass(s interface{}) str { return str(toString(s)) }
 
 func toHCL(v interface{}) (string, error) {
 	output, err := hcl.Marshal(v)
@@ -402,7 +401,7 @@ type unMarshaler func([]byte, interface{}) error
 func (t Template) converter(from unMarshaler, content string, sourceWithError bool, context ...interface{}) (result interface{}, err error) {
 	if err = from([]byte(content), &result); err != nil && sourceWithError {
 		source := "\n"
-		for i, line := range collections.SplitLines(content) {
+		for i, line := range str(content).Lines() {
 			source += fmt.Sprintf("%4d %s\n", i+1, line)
 		}
 		err = fmt.Errorf("%s\n%v", source, err)
@@ -529,15 +528,15 @@ func contains(list interface{}, elements ...interface{}) (r bool, err error) {
 	defer func() { err = trapError(err, recover()) }()
 	if _, err := collections.TryAsList(list); err != nil && len(elements) == 1 {
 		if _, err2 := collections.TryAsList(elements[0]); err2 != nil {
-			str, subStr := elements[0], list
-			if s, isString := str.(collections.String); isString {
+			element, subStr := elements[0], list
+			if s, isString := element.(str); isString {
 				// Check if the str argument is of type String
-				str = string(s)
+				element = string(s)
 			}
 
-			if s, isString := str.(string); isString {
+			if s, isString := element.(string); isString {
 				// Check if the list argument is of type string
-				return strings.Contains(s, fmt.Sprint(subStr)), nil
+				return str(s).Contains(fmt.Sprint(subStr)), nil
 			}
 			return false, err
 		}

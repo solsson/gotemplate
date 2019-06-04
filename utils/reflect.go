@@ -2,10 +2,10 @@ package utils
 
 import (
 	"github.com/coveo/gotemplate/v3/collections"
+	"github.com/coveo/gotemplate/v3/strings"
 )
 
-// String is simply an alias of collections.String
-type String = collections.String
+type str = strings.String
 
 var isEmpty = collections.IsEmptyValue
 

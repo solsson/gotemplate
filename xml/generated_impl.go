@@ -4,7 +4,10 @@
 
 package xml
 
-import "github.com/coveo/gotemplate/v3/collections"
+import (
+	"github.com/coveo/gotemplate/v3/collections"
+	"github.com/coveo/gotemplate/v3/strings"
+)
 
 // List implementation of IGenericList for xmlList
 type List = xmlList
@@ -139,8 +142,11 @@ var DictionaryHelper collections.IDictionaryHelper = xmlDictHelper
 var GenericListHelper collections.IListHelper = xmlListHelper
 
 type (
-	str      = collections.String
-	strArray = collections.StringArray
+	str      = strings.String
+	strArray = strings.StringArray
 )
 
-var iif = collections.IIf
+var (
+	iif = collections.IIf
+	ts  = strings.TrimmedString
+)

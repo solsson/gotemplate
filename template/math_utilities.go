@@ -169,7 +169,7 @@ func generateNumericArray(limit bool, params ...interface{}) (result collections
 		stop = toFloat(params[0])
 	case 3:
 		step = math.Abs(toFloat(params[2]))
-		_, frac := collections.Split2(fmt.Sprintf("%g", step), ".")
+		_, frac := split2(fmt.Sprintf("%g", step), ".")
 		precision = len(frac)
 		fallthrough
 	case 2:
