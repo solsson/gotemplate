@@ -6,6 +6,7 @@ package xml
 
 import (
 	"github.com/coveo/gotemplate/v3/collections"
+	"github.com/coveo/gotemplate/v3/errors"
 	"github.com/coveo/gotemplate/v3/strings"
 )
 
@@ -98,7 +99,7 @@ func (d xmlDict) GetValues() xmlIList                 { return xmlDictHelper.Get
 func (d xmlDict) Has(keys ...interface{}) bool        { return xmlDictHelper.Has(d, keys) }
 func (d xmlDict) KeysAsString() strArray              { return xmlDictHelper.KeysAsString(d) }
 func (d xmlDict) Len() int                            { return len(d) }
-func (d xmlDict) Native() interface{}                 { return collections.ToNativeRepresentation(d) }
+func (d xmlDict) Native() interface{}                 { return must(collections.MarshalGo(d)) }
 func (d xmlDict) Pop(keys ...interface{}) interface{} { return xmlDictHelper.Pop(d, keys) }
 func (d xmlDict) Set(key, v interface{}) xmlIDict     { return xmlDictHelper.Set(d, key, v) }
 func (d xmlDict) Transpose() xmlIDict                 { return xmlDictHelper.Transpose(d) }
@@ -147,6 +148,7 @@ type (
 )
 
 var (
-	iif = collections.IIf
-	ts  = strings.TrimmedString
+	iif  = collections.IIf
+	ts   = strings.TrimmedString
+	must = errors.Must
 )

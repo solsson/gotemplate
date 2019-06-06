@@ -6,6 +6,7 @@ package json
 
 import (
 	"github.com/coveo/gotemplate/v3/collections"
+	"github.com/coveo/gotemplate/v3/errors"
 	"github.com/coveo/gotemplate/v3/strings"
 )
 
@@ -98,7 +99,7 @@ func (d jsonDict) GetValues() jsonIList                { return jsonDictHelper.G
 func (d jsonDict) Has(keys ...interface{}) bool        { return jsonDictHelper.Has(d, keys) }
 func (d jsonDict) KeysAsString() strArray              { return jsonDictHelper.KeysAsString(d) }
 func (d jsonDict) Len() int                            { return len(d) }
-func (d jsonDict) Native() interface{}                 { return collections.ToNativeRepresentation(d) }
+func (d jsonDict) Native() interface{}                 { return must(collections.MarshalGo(d)) }
 func (d jsonDict) Pop(keys ...interface{}) interface{} { return jsonDictHelper.Pop(d, keys) }
 func (d jsonDict) Set(key, v interface{}) jsonIDict    { return jsonDictHelper.Set(d, key, v) }
 func (d jsonDict) Transpose() jsonIDict                { return jsonDictHelper.Transpose(d) }
@@ -147,6 +148,7 @@ type (
 )
 
 var (
-	iif = collections.IIf
-	ts  = strings.TrimmedString
+	iif  = collections.IIf
+	ts   = strings.TrimmedString
+	must = errors.Must
 )

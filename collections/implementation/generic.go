@@ -2,6 +2,7 @@ package implementation
 
 import (
 	"github.com/coveo/gotemplate/v3/collections"
+	"github.com/coveo/gotemplate/v3/errors"
 	"github.com/coveo/gotemplate/v3/strings"
 )
 
@@ -88,7 +89,7 @@ func (d baseDict) GetValues() baseIList                { return baseDictHelper.G
 func (d baseDict) Has(keys ...interface{}) bool        { return baseDictHelper.Has(d, keys) }
 func (d baseDict) KeysAsString() strArray              { return baseDictHelper.KeysAsString(d) }
 func (d baseDict) Len() int                            { return len(d) }
-func (d baseDict) Native() interface{}                 { return collections.ToNativeRepresentation(d) }
+func (d baseDict) Native() interface{}                 { return must(collections.MarshalGo(d)) }
 func (d baseDict) Pop(keys ...interface{}) interface{} { return baseDictHelper.Pop(d, keys) }
 func (d baseDict) Set(key, v interface{}) baseIDict    { return baseDictHelper.Set(d, key, v) }
 func (d baseDict) Transpose() baseIDict                { return baseDictHelper.Transpose(d) }
@@ -137,6 +138,7 @@ type (
 )
 
 var (
-	iif = collections.IIf
-	ts  = strings.TrimmedString
+	iif  = collections.IIf
+	ts   = strings.TrimmedString
+	must = errors.Must
 )

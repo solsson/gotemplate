@@ -2,7 +2,6 @@ package hcl
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/coveo/gotemplate/v3/collections"
@@ -94,9 +93,11 @@ func TestMarshalHCLVars(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			value := collections.ToNativeRepresentation(tt.args.value)
-			got, _ := marshalHCL(value, true, true, "", tt.args.indent)
+			value, err := collections.MarshalGo(tt.args.value)
+			assert.NoError(t, err)
+			got, err := marshalHCL(value, true, true, "", tt.args.indent)
 			assert.Equal(t, tt.want, got)
+			assert.NoError(t, err)
 		})
 	}
 }
@@ -105,27 +106,22 @@ func TestUnmarshal(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name    string
-		hcl     string
-		want    interface{}
-		wantErr bool
+		name string
+		hcl  string
+		want interface{}
 	}{
-		{"Empty", "", hclDict{}, false},
-		{"Empty list", "[]", hclList{}, false},
-		{"List of int", "[1,2,3]", hclList{1, 2, 3}, false},
-		{"Array of map", "a { b { c { d = 1 e = 2 }}}", hclDict{"a": hclDict{"b": hclDict{"c": hclDict{"d": 1, "e": 2}}}}, false},
-		{"Map", fmt.Sprint(dictFixture), dictFixture, false},
+		{"Empty", "", hclDict{}},
+		{"Empty list", "[]", hclList{}},
+		{"List of int", "[1,2,3]", hclList{1, 2, 3}},
+		{"Array of map", "a { b { c { d = 1 e = 2 }}}", hclDict{"a": hclDict{"b": hclDict{"c": hclDict{"d": 1, "e": 2}}}}},
+		{"Map", fmt.Sprint(dictFixture), dictFixture},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var out interface{}
 			err := Unmarshal([]byte(tt.hcl), &out)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Unmarshal() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if err == nil && !reflect.DeepEqual(out, tt.want) {
-				t.Errorf("Unmarshal:\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", out, tt.want)
-			}
+			assert.Equal(t, tt.want, out)
+			assert.NoError(t, err)
 		})
 	}
 }
@@ -137,23 +133,23 @@ func TestUnmarshalStrict(t *testing.T) {
 		name    string
 		hcl     string
 		want    interface{}
-		wantErr bool
+		wantErr error
 	}{
-		{"Empty", "", map[string]interface{}{}, false},
-		{"Empty list", "[]", nil, true},
-		{"List of int", "[1,2,3]", nil, true},
-		{"Array of map", "a { b { c { d = 1 e = 2 }}}", map[string]interface{}{"a": map[string]interface{}{"b": map[string]interface{}{"c": map[string]interface{}{"d": 1, "e": 2}}}}, false},
-		{"Map", fmt.Sprint(dictFixture), dictFixture.Native(), false},
+		{"Empty", "", map[string]interface{}{}, nil},
+		{"Empty list", "[]", map[string]interface{}(nil), fmt.Errorf("reflect.Set: value of type []interface {} is not assignable to type map[string]interface {}")},
+		{"List of int", "[1,2,3]", map[string]interface{}(nil), fmt.Errorf("reflect.Set: value of type []interface {} is not assignable to type map[string]interface {}")},
+		{"Array of map", "a { b { c { d = 1 e = 2 }}}", map[string]interface{}{"a": map[string]interface{}{"b": map[string]interface{}{"c": map[string]interface{}{"d": 1, "e": 2}}}}, nil},
+		{"Map", fmt.Sprint(dictFixture), dictFixture.Native(), nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var out map[string]interface{}
 			err := Unmarshal([]byte(tt.hcl), &out)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Unmarshal() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if err == nil && !reflect.DeepEqual(out, tt.want) {
-				t.Errorf("Unmarshal:\n got %[1]v (%[1]T)\nwant %[2]v (%[2]T)", out, tt.want)
+			assert.Equal(t, tt.want, out)
+			if tt.wantErr == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.EqualError(t, err, tt.wantErr.Error())
 			}
 		})
 	}

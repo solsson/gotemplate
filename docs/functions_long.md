@@ -224,7 +224,7 @@ func yaml(yaml interface{}, context ...interface{}) interface{}, error
 
 ```go
 // Returns a String class object that allows invoking standard string operations as method.
-func String(value interface{}) String
+func String(value interface{}) strings.String
 ```
 
 ```go
@@ -1584,6 +1584,11 @@ func keysSprig(args ...map[string]interface{}) []string
 ```go
 // Aliases: list, tuple, tupleSprig
 func listSprig(args ...interface{}) []interface{}
+```
+
+```go
+// Merge two or more dictionaries into one, giving precedence from **right to left**, effectively overwriting values in the dest dictionary
+func mergeOverwrite(arg1 map[string]interface{}, args ...map[string]interface{}) interface{}
 ```
 
 ```go

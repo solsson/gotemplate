@@ -13,7 +13,7 @@ Get(...int) interface{}
 GetHelpers() IDictionaryHelper, IListHelper
 Has(...interface{}) bool
 Intersect(...interface{}) IGenericList
-Join(interface{}) String
+Join(interface{}) strings.String
 Last() interface{}
 Len() int
 New(...interface{}) IGenericList
@@ -24,9 +24,9 @@ Remove(...int) IGenericList
 Reverse() IGenericList
 Set(int, interface{}) IGenericList, error
 String() string
-StringArray() StringArray
+StringArray() strings.StringArray
 Strings() []string
-TypeName() String
+TypeName() strings.String
 Union(...interface{}) IGenericList
 Unique() IGenericList
 Without(...interface{}) IGenericList
