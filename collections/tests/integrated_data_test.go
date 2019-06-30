@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/coveo/gotemplate/v3/collections"
-	impl "github.com/coveo/gotemplate/v3/collections/implementation"
-	"github.com/coveo/gotemplate/v3/hcl"
-	"github.com/coveo/gotemplate/v3/json"
-	Strings "github.com/coveo/gotemplate/v3/strings"
-	"github.com/coveo/gotemplate/v3/yaml"
+	"github.com/coveooss/gotemplate/v3/collections"
+	impl "github.com/coveooss/gotemplate/v3/collections/implementation"
+	"github.com/coveooss/gotemplate/v3/hcl"
+	"github.com/coveooss/gotemplate/v3/json"
+	Strings "github.com/coveooss/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/yaml"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,7 +20,6 @@ var (
 	yamlHelper = yaml.DictionaryHelper
 	jsonHelper = json.DictionaryHelper
 	genHelper  = impl.DictionaryHelper
-	ts         = Strings.TrimmedString
 )
 
 func TestConvertData(t *testing.T) {
@@ -82,7 +81,7 @@ func TestToBash(t *testing.T) {
 				"b": 2,
 			},
 			SS: SubStruct{64, "Foo"},
-		}, ts(`
+		}, Strings.TrimmedString(`
 		declare -a A
 		A=(1 2)
 		F=1.23

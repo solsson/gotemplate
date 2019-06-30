@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"github.com/coveo/gotemplate/v3/collections"
-	"github.com/coveo/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/collections"
+	"github.com/coveooss/gotemplate/v3/strings"
 )
 
 type str = strings.String

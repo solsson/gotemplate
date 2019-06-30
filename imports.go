@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/coveo/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/strings"
 )
 
 // Imported functions from other packages
 var (
-	split2 = strings.Split2
-	ts     = strings.TrimmedString
+	split2        = strings.Split2
+	TrimmedString = strings.TrimmedString
 )
 
 type (

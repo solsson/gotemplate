@@ -1,4 +1,4 @@
-module github.com/coveo/gotemplate/v3
+module github.com/coveooss/gotemplate/v3
 
 go 1.12
 
@@ -8,7 +8,7 @@ require (
 	github.com/Masterminds/sprig v0.0.0-20190301161902-9f8fceff796f
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/bmatcuk/doublestar v1.1.1
-	github.com/coveo/kingpin/v2 v2.3.0
+	github.com/coveord/kingpin/v2 v2.3.1
 	github.com/drhodes/goLorem v0.0.0-20160418191928-ecccc744c2d9
 	github.com/fatih/color v1.7.0
 	github.com/go-errors/errors v1.0.1

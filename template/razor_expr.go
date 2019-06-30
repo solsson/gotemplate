@@ -167,7 +167,6 @@ func nodeValueInternal(node ast.Node) (result string, err error) {
 		return
 	}
 
-	// if first, _ := collections.Split2(result, " "); !strings.HasPrefix(first, dotRep) || strings.Contains(first, funcCall) {
 	if first, _ := split2(result, " "); !(strings.HasPrefix(first, dotRep) && strings.Contains(first, funcCall)) {
 		result = fmt.Sprintf("(%s)", result)
 	}

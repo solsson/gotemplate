@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/coveo/gotemplate/v3/collections"
-	"github.com/coveo/gotemplate/v3/utils"
+	"github.com/coveooss/gotemplate/v3/collections"
+	"github.com/coveooss/gotemplate/v3/utils"
 )
 
 const (
@@ -61,7 +61,7 @@ var utilsFuncsAliases = aliases{
 
 var utilsFuncsHelp = descriptions{
 	"center": "Returns the concatenation of supplied arguments centered within width.",
-	"color": ts(`
+	"color": TrimmedString(`
 		Colors the rendered string.
 
 		The first arguments are interpretated as color attributes until the first non color attribute. Attributes are case insensitive.
@@ -79,7 +79,7 @@ var utilsFuncsHelp = descriptions{
 		    BgHi: Meaning high intensity background
 	`),
 	"concat": "Returns the concatenation (without separator) of the string representation of objects.",
-	"formatList": ts(`
+	"formatList": TrimmedString(`
 		Return a list of strings by applying the format to each element of the supplied list.
 
 		You can also use autoWrap as Razor expression if you don't want to specify the format.
@@ -97,7 +97,7 @@ var utilsFuncsHelp = descriptions{
 	"mergeList": "Return a single list containing all elements from the lists supplied.",
 	"nindent":   "Work as indent but add a newline before.",
 	"repeat":    "Returns an array with the item repeated n times.",
-	"sIndent": ts(`
+	"sIndent": TrimmedString(`
 		Indents the elements using the provided spacer.
 		
 		You can also use autoIndent as Razor expression if you don't want to specify the spacer.

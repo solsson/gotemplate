@@ -5,9 +5,9 @@
 package json
 
 import (
-	"github.com/coveo/gotemplate/v3/collections"
-	"github.com/coveo/gotemplate/v3/errors"
-	"github.com/coveo/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/collections"
+	"github.com/coveooss/gotemplate/v3/errors"
+	"github.com/coveooss/gotemplate/v3/strings"
 )
 
 // List implementation of IGenericList for jsonList
@@ -147,8 +147,9 @@ type (
 	strArray = strings.StringArray
 )
 
+// Imported functions
 var (
-	iif  = collections.IIf
-	ts   = strings.TrimmedString
-	must = errors.Must
+	iif           = collections.IIf
+	TrimmedString = strings.TrimmedString
+	must          = errors.Must
 )

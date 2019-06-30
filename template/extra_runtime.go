@@ -10,9 +10,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/coveo/gotemplate/v3/collections"
-	"github.com/coveo/gotemplate/v3/hcl"
-	"github.com/coveo/gotemplate/v3/utils"
+	"github.com/coveooss/gotemplate/v3/collections"
+	"github.com/coveooss/gotemplate/v3/hcl"
+	"github.com/coveooss/gotemplate/v3/utils"
 	"github.com/fatih/color"
 )
 
@@ -52,7 +52,7 @@ var runtimeFuncsHelp = descriptions{
 	"allFunctions":  "Returns the list of all available functions.",
 	"assert":        "Raises a formated error if the test condition is false.",
 	"assertWarning": "Issues a formated warning if the test condition is false.",
-	"categories": ts(`
+	"categories": TrimmedString(`
 		Returns all functions group by categories.
 
 		The returned value has the following properties:
@@ -64,7 +64,7 @@ var runtimeFuncsHelp = descriptions{
 	"exec":     "Returns the result of the shell command as structured data (as string if no other conversion is possible).",
 	"exit":     "Exits the current program execution.",
 	"func":     "Defines a function with the current context using the function (exec, run, include, template). Executed in the context of the caller.",
-	"function": ts(`
+	"function": TrimmedString(`
 		Returns the information relative to a specific function.
 
 		The returned value has the following properties:

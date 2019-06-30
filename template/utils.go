@@ -3,7 +3,7 @@ package template
 import (
 	"path/filepath"
 
-	"github.com/coveo/gotemplate/v3/utils"
+	"github.com/coveooss/gotemplate/v3/utils"
 )
 
 func getTargetFile(targetFile, sourcePath, targetPath string) string {

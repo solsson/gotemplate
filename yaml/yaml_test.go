@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/coveo/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/strings"
 )
 
 var lts = strings.LeftTrimmedString

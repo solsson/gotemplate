@@ -1,8 +1,8 @@
 package collections
 
 import (
-	"github.com/coveo/gotemplate/v3/errors"
-	"github.com/coveo/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/errors"
+	"github.com/coveooss/gotemplate/v3/strings"
 )
 
 // Functions imported from other modules
