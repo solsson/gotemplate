@@ -7,7 +7,7 @@ package json
 import (
 	"github.com/coveooss/gotemplate/v3/collections"
 	"github.com/coveooss/gotemplate/v3/errors"
-	"github.com/coveooss/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/stringclass"
 )
 
 // List implementation of IGenericList for jsonList
@@ -32,14 +32,14 @@ func (l jsonList) Get(indexes ...int) interface{} {
 	return jsonListHelper.GetIndexes(l, indexes...)
 }
 func (l jsonList) Has(values ...interface{}) bool    { return l.Contains(values...) }
-func (l jsonList) Join(sep interface{}) str          { return l.StringArray().Join(sep) }
+func (l jsonList) Join(sep interface{}) String       { return l.StringArray().Join(sep) }
 func (l jsonList) Last() interface{}                 { return jsonListHelper.GetIndexes(l, len(l)-1) }
 func (l jsonList) Len() int                          { return len(l) }
 func (l jsonList) New(args ...interface{}) jsonIList { return jsonListHelper.NewList(args...) }
 func (l jsonList) Reverse() jsonIList                { return jsonListHelper.Reverse(l) }
-func (l jsonList) StringArray() strArray             { return jsonListHelper.GetStringArray(l) }
+func (l jsonList) StringArray() StringArray          { return jsonListHelper.GetStringArray(l) }
 func (l jsonList) Strings() []string                 { return jsonListHelper.GetStrings(l) }
-func (l jsonList) TypeName() str                     { return "Json" }
+func (l jsonList) TypeName() String                  { return "Json" }
 func (l jsonList) Unique() jsonIList                 { return jsonListHelper.Unique(l) }
 
 func (l jsonList) GetHelpers() (collections.IDictionaryHelper, collections.IListHelper) {
@@ -97,13 +97,13 @@ func (d jsonDict) Get(keys ...interface{}) interface{} { return jsonDictHelper.G
 func (d jsonDict) GetKeys() jsonIList                  { return jsonDictHelper.GetKeys(d) }
 func (d jsonDict) GetValues() jsonIList                { return jsonDictHelper.GetValues(d) }
 func (d jsonDict) Has(keys ...interface{}) bool        { return jsonDictHelper.Has(d, keys) }
-func (d jsonDict) KeysAsString() strArray              { return jsonDictHelper.KeysAsString(d) }
+func (d jsonDict) KeysAsString() StringArray           { return jsonDictHelper.KeysAsString(d) }
 func (d jsonDict) Len() int                            { return len(d) }
 func (d jsonDict) Native() interface{}                 { return must(collections.MarshalGo(d)) }
 func (d jsonDict) Pop(keys ...interface{}) interface{} { return jsonDictHelper.Pop(d, keys) }
 func (d jsonDict) Set(key, v interface{}) jsonIDict    { return jsonDictHelper.Set(d, key, v) }
 func (d jsonDict) Transpose() jsonIDict                { return jsonDictHelper.Transpose(d) }
-func (d jsonDict) TypeName() str                       { return "Json" }
+func (d jsonDict) TypeName() String                    { return "Json" }
 
 func (d jsonDict) GetHelpers() (collections.IDictionaryHelper, collections.IListHelper) {
 	return jsonDictHelper, jsonListHelper
@@ -143,13 +143,15 @@ var DictionaryHelper collections.IDictionaryHelper = jsonDictHelper
 var GenericListHelper collections.IListHelper = jsonListHelper
 
 type (
-	str      = strings.String
-	strArray = strings.StringArray
+	// String is imported from stringclass
+	String = stringclass.String
+	// StringArray is imported from stringclass
+	StringArray = stringclass.StringArray
 )
 
 // Imported functions
 var (
 	iif           = collections.IIf
-	TrimmedString = strings.TrimmedString
+	TrimmedString = stringclass.TrimmedString
 	must          = errors.Must
 )

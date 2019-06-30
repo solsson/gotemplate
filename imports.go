@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/coveooss/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/stringclass"
 )
 
 // Imported functions from other packages
 var (
-	split2        = strings.Split2
-	TrimmedString = strings.TrimmedString
+	split2        = stringclass.Split2
+	TrimmedString = stringclass.TrimmedString
 )
 
 type (
-	str = strings.String
+	str = stringclass.String
 )

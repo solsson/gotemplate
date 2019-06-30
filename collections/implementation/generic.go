@@ -3,7 +3,7 @@ package implementation
 import (
 	"github.com/coveooss/gotemplate/v3/collections"
 	"github.com/coveooss/gotemplate/v3/errors"
-	"github.com/coveooss/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/stringclass"
 )
 
 // ListTypeName implementation of IGenericList for baseList
@@ -22,14 +22,14 @@ func (l baseList) CreateDict(args ...int) baseIDict    { return baseListHelper.C
 func (l baseList) First() interface{}                  { return baseListHelper.GetIndexes(l, 0) }
 func (l baseList) Get(indexes ...int) interface{}      { return baseListHelper.GetIndexes(l, indexes...) }
 func (l baseList) Has(values ...interface{}) bool      { return l.Contains(values...) }
-func (l baseList) Join(sep interface{}) str            { return l.StringArray().Join(sep) }
+func (l baseList) Join(sep interface{}) String         { return l.StringArray().Join(sep) }
 func (l baseList) Last() interface{}                   { return baseListHelper.GetIndexes(l, len(l)-1) }
 func (l baseList) Len() int                            { return len(l) }
 func (l baseList) New(args ...interface{}) baseIList   { return baseListHelper.NewList(args...) }
 func (l baseList) Reverse() baseIList                  { return baseListHelper.Reverse(l) }
-func (l baseList) StringArray() strArray               { return baseListHelper.GetStringArray(l) }
+func (l baseList) StringArray() StringArray            { return baseListHelper.GetStringArray(l) }
 func (l baseList) Strings() []string                   { return baseListHelper.GetStrings(l) }
-func (l baseList) TypeName() str                       { return "base" }
+func (l baseList) TypeName() String                    { return "base" }
 func (l baseList) Unique() baseIList                   { return baseListHelper.Unique(l) }
 
 func (l baseList) GetHelpers() (collections.IDictionaryHelper, collections.IListHelper) {
@@ -87,13 +87,13 @@ func (d baseDict) Get(keys ...interface{}) interface{} { return baseDictHelper.G
 func (d baseDict) GetKeys() baseIList                  { return baseDictHelper.GetKeys(d) }
 func (d baseDict) GetValues() baseIList                { return baseDictHelper.GetValues(d) }
 func (d baseDict) Has(keys ...interface{}) bool        { return baseDictHelper.Has(d, keys) }
-func (d baseDict) KeysAsString() strArray              { return baseDictHelper.KeysAsString(d) }
+func (d baseDict) KeysAsString() StringArray           { return baseDictHelper.KeysAsString(d) }
 func (d baseDict) Len() int                            { return len(d) }
 func (d baseDict) Native() interface{}                 { return must(collections.MarshalGo(d)) }
 func (d baseDict) Pop(keys ...interface{}) interface{} { return baseDictHelper.Pop(d, keys) }
 func (d baseDict) Set(key, v interface{}) baseIDict    { return baseDictHelper.Set(d, key, v) }
 func (d baseDict) Transpose() baseIDict                { return baseDictHelper.Transpose(d) }
-func (d baseDict) TypeName() str                       { return "base" }
+func (d baseDict) TypeName() String                    { return "base" }
 
 func (d baseDict) GetHelpers() (collections.IDictionaryHelper, collections.IListHelper) {
 	return baseDictHelper, baseListHelper
@@ -133,13 +133,15 @@ var DictionaryHelper collections.IDictionaryHelper = baseDictHelper
 var GenericListHelper collections.IListHelper = baseListHelper
 
 type (
-	str      = strings.String
-	strArray = strings.StringArray
+	// String is imported from stringclass
+	String = stringclass.String
+	// StringArray is imported from stringclass
+	StringArray = stringclass.StringArray
 )
 
 // Imported functions
 var (
 	iif           = collections.IIf
-	TrimmedString = strings.TrimmedString
+	TrimmedString = stringclass.TrimmedString
 	must          = errors.Must
 )

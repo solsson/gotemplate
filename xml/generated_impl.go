@@ -7,7 +7,7 @@ package xml
 import (
 	"github.com/coveooss/gotemplate/v3/collections"
 	"github.com/coveooss/gotemplate/v3/errors"
-	"github.com/coveooss/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/stringclass"
 )
 
 // List implementation of IGenericList for xmlList
@@ -32,14 +32,14 @@ func (l xmlList) Get(indexes ...int) interface{} {
 	return xmlListHelper.GetIndexes(l, indexes...)
 }
 func (l xmlList) Has(values ...interface{}) bool   { return l.Contains(values...) }
-func (l xmlList) Join(sep interface{}) str         { return l.StringArray().Join(sep) }
+func (l xmlList) Join(sep interface{}) String      { return l.StringArray().Join(sep) }
 func (l xmlList) Last() interface{}                { return xmlListHelper.GetIndexes(l, len(l)-1) }
 func (l xmlList) Len() int                         { return len(l) }
 func (l xmlList) New(args ...interface{}) xmlIList { return xmlListHelper.NewList(args...) }
 func (l xmlList) Reverse() xmlIList                { return xmlListHelper.Reverse(l) }
-func (l xmlList) StringArray() strArray            { return xmlListHelper.GetStringArray(l) }
+func (l xmlList) StringArray() StringArray         { return xmlListHelper.GetStringArray(l) }
 func (l xmlList) Strings() []string                { return xmlListHelper.GetStrings(l) }
-func (l xmlList) TypeName() str                    { return "Xml" }
+func (l xmlList) TypeName() String                 { return "Xml" }
 func (l xmlList) Unique() xmlIList                 { return xmlListHelper.Unique(l) }
 
 func (l xmlList) GetHelpers() (collections.IDictionaryHelper, collections.IListHelper) {
@@ -97,13 +97,13 @@ func (d xmlDict) Get(keys ...interface{}) interface{} { return xmlDictHelper.Get
 func (d xmlDict) GetKeys() xmlIList                   { return xmlDictHelper.GetKeys(d) }
 func (d xmlDict) GetValues() xmlIList                 { return xmlDictHelper.GetValues(d) }
 func (d xmlDict) Has(keys ...interface{}) bool        { return xmlDictHelper.Has(d, keys) }
-func (d xmlDict) KeysAsString() strArray              { return xmlDictHelper.KeysAsString(d) }
+func (d xmlDict) KeysAsString() StringArray           { return xmlDictHelper.KeysAsString(d) }
 func (d xmlDict) Len() int                            { return len(d) }
 func (d xmlDict) Native() interface{}                 { return must(collections.MarshalGo(d)) }
 func (d xmlDict) Pop(keys ...interface{}) interface{} { return xmlDictHelper.Pop(d, keys) }
 func (d xmlDict) Set(key, v interface{}) xmlIDict     { return xmlDictHelper.Set(d, key, v) }
 func (d xmlDict) Transpose() xmlIDict                 { return xmlDictHelper.Transpose(d) }
-func (d xmlDict) TypeName() str                       { return "Xml" }
+func (d xmlDict) TypeName() String                    { return "Xml" }
 
 func (d xmlDict) GetHelpers() (collections.IDictionaryHelper, collections.IListHelper) {
 	return xmlDictHelper, xmlListHelper
@@ -143,13 +143,15 @@ var DictionaryHelper collections.IDictionaryHelper = xmlDictHelper
 var GenericListHelper collections.IListHelper = xmlListHelper
 
 type (
-	str      = strings.String
-	strArray = strings.StringArray
+	// String is imported from stringclass
+	String = stringclass.String
+	// StringArray is imported from stringclass
+	StringArray = stringclass.StringArray
 )
 
 // Imported functions
 var (
 	iif           = collections.IIf
-	TrimmedString = strings.TrimmedString
+	TrimmedString = stringclass.TrimmedString
 	must          = errors.Must
 )

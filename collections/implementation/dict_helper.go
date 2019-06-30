@@ -10,7 +10,7 @@ func (d baseDict) String() string {
 	// Unlike go maps, we render dictionary keys in order
 	keys := d.KeysAsString()
 	for i, k := range keys {
-		keys[i] = str(fmt.Sprintf("%s:%v", k, d.Get(k)))
+		keys[i] = String(fmt.Sprintf("%s:%v", k, d.Get(k)))
 	}
 	return fmt.Sprintf("dict[%s]", keys.Join(" "))
 }
@@ -106,10 +106,10 @@ func (dh DictHelper) GetKeys(dict baseIDict) baseIList {
 }
 
 // KeysAsString returns the keys in the dictionary in alphabetical order.
-func (dh DictHelper) KeysAsString(dict baseIDict) strArray {
-	keys := make(strArray, 0, dict.Len())
+func (dh DictHelper) KeysAsString(dict baseIDict) StringArray {
+	keys := make(StringArray, 0, dict.Len())
 	for key := range dict.AsMap() {
-		keys = append(keys, str(key))
+		keys = append(keys, String(key))
 	}
 	return keys.Sorted()
 }

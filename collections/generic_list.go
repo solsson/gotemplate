@@ -20,7 +20,7 @@ type IGenericList interface {
 	GetHelpers() (IDictionaryHelper, IListHelper)           // Returns the helpers implementation associated with the current type.
 	Has(...interface{}) bool                                // Alias for contains
 	Intersect(...interface{}) IGenericList                  // Returns a list that is the result of the intersection of the list and the parameters (removing duplicates).
-	Join(sep interface{}) str                               // Returns the string representation of the list.
+	Join(sep interface{}) String                            // Returns the string representation of the list.
 	Last() interface{}                                      // Returns the last element of the list.
 	Len() int                                               // Returns the number of elements in the list.
 	New(...interface{}) IGenericList                        // Creates a new generic list from the supplied arguments.
@@ -31,9 +31,9 @@ type IGenericList interface {
 	Reverse() IGenericList                                  // Returns a copy of the current list in reverse order.
 	Set(index int, value interface{}) (IGenericList, error) // Sets the value at position index into the list. If list is not large enough, it is enlarged to fit the index.
 	String() string                                         // Returns the string representation of the list.
-	StringArray() strArray                                  // Returns the current list as StringArray.
+	StringArray() StringArray                               // Returns the current list as StringArray.
 	Strings() []string                                      // Returns the current list as list of strings.
-	TypeName() str                                          // Returns the actual type name
+	TypeName() String                                       // Returns the actual type name
 	Union(...interface{}) IGenericList                      // Returns a list that represents the union of the list and the elements (removing duplicates).
 	Unique() IGenericList                                   // Returns a copy of the list removing all duplicate elements.
 	Without(...interface{}) IGenericList                    // Returns a copy of the list removing specified elements.

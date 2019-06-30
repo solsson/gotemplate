@@ -803,7 +803,7 @@ func Test_dict_Keys(t *testing.T) {
 		want baseIList
 	}{
 		{"Empty", nil, baseList{}},
-		{"Map", dictFixture, baseList{str("float"), str("int"), str("list"), str("listInt"), str("map"), str("mapInt"), str("string")}},
+		{"Map", dictFixture, baseList{String("float"), String("int"), String("list"), String("listInt"), String("map"), String("mapInt"), String("string")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -820,10 +820,10 @@ func Test_dict_KeysAsString(t *testing.T) {
 	tests := []struct {
 		name string
 		d    baseDict
-		want strArray
+		want StringArray
 	}{
-		{"Empty", nil, strArray{}},
-		{"Map", dictFixture, strArray{"float", "int", "list", "listInt", "map", "mapInt", "string"}},
+		{"Empty", nil, StringArray{}},
+		{"Map", dictFixture, StringArray{"float", "int", "list", "listInt", "map", "mapInt", "string"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -992,10 +992,10 @@ func Test_dict_Transpose(t *testing.T) {
 		want baseIDict
 	}{
 		{"Empty", nil, baseDict{}},
-		{"Base", baseDict{"A": 1}, baseDict{"1": str("A")}},
-		{"Multiple", baseDict{"A": 1, "B": 2, "C": 1}, baseDict{"1": baseList{str("A"), str("C")}, "2": str("B")}},
-		{"List", baseDict{"A": []int{1, 2, 3}, "B": 2, "C": 3}, baseDict{"1": str("A"), "2": baseList{str("A"), str("B")}, "3": baseList{str("A"), str("C")}}},
-		{"Complex", baseDict{"A": baseDict{"1": 1, "2": 2}, "B": 2, "C": 3}, baseDict{"2": str("B"), "3": str("C"), fmt.Sprint(baseDict{"1": 1, "2": 2}): str("A")}},
+		{"Base", baseDict{"A": 1}, baseDict{"1": String("A")}},
+		{"Multiple", baseDict{"A": 1, "B": 2, "C": 1}, baseDict{"1": baseList{String("A"), String("C")}, "2": String("B")}},
+		{"List", baseDict{"A": []int{1, 2, 3}, "B": 2, "C": 3}, baseDict{"1": String("A"), "2": baseList{String("A"), String("B")}, "3": baseList{String("A"), String("C")}}},
+		{"Complex", baseDict{"A": baseDict{"1": 1, "2": 2}, "B": 2, "C": 3}, baseDict{"2": String("B"), "3": String("C"), fmt.Sprint(baseDict{"1": 1, "2": 2}): String("A")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1031,7 +1031,7 @@ func Test_baseList_TypeName(t *testing.T) {
 	tests := []struct {
 		name string
 		l    baseList
-		want str
+		want String
 	}{
 		// TODO: Add test cases.
 	}
@@ -1045,8 +1045,8 @@ func Test_baseList_TypeName(t *testing.T) {
 }
 
 func Test_base_TypeName(t *testing.T) {
-	t.Run("list", func(t *testing.T) { assert.Equal(t, baseList{}.TypeName(), str("base")) })
-	t.Run("dict", func(t *testing.T) { assert.Equal(t, baseDict{}.TypeName(), str("base")) })
+	t.Run("list", func(t *testing.T) { assert.Equal(t, baseList{}.TypeName(), String("base")) })
+	t.Run("dict", func(t *testing.T) { assert.Equal(t, baseDict{}.TypeName(), String("base")) })
 }
 
 func Test_base_GetHelper(t *testing.T) {

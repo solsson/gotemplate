@@ -2,10 +2,10 @@ package utils
 
 import (
 	"github.com/coveooss/gotemplate/v3/collections"
-	"github.com/coveooss/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/stringclass"
 )
 
-type str = strings.String
+type str = stringclass.String
 
 var isEmpty = collections.IsEmptyValue
 

@@ -806,7 +806,7 @@ func Test_dict_Keys(t *testing.T) {
 		want yamlIList
 	}{
 		{"Empty", nil, yamlList{}},
-		{"Map", dictFixture, yamlList{str("float"), str("int"), str("list"), str("listInt"), str("map"), str("mapInt"), str("string")}},
+		{"Map", dictFixture, yamlList{String("float"), String("int"), String("list"), String("listInt"), String("map"), String("mapInt"), String("string")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -823,10 +823,10 @@ func Test_dict_KeysAsString(t *testing.T) {
 	tests := []struct {
 		name string
 		d    yamlDict
-		want strArray
+		want StringArray
 	}{
-		{"Empty", nil, strArray{}},
-		{"Map", dictFixture, strArray{"float", "int", "list", "listInt", "map", "mapInt", "string"}},
+		{"Empty", nil, StringArray{}},
+		{"Map", dictFixture, StringArray{"float", "int", "list", "listInt", "map", "mapInt", "string"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -995,10 +995,10 @@ func Test_dict_Transpose(t *testing.T) {
 		want yamlIDict
 	}{
 		{"Empty", nil, yamlDict{}},
-		{"Base", yamlDict{"A": 1}, yamlDict{"1": str("A")}},
-		{"Multiple", yamlDict{"A": 1, "B": 2, "C": 1}, yamlDict{"1": yamlList{str("A"), str("C")}, "2": str("B")}},
-		{"List", yamlDict{"A": []int{1, 2, 3}, "B": 2, "C": 3}, yamlDict{"1": str("A"), "2": yamlList{str("A"), str("B")}, "3": yamlList{str("A"), str("C")}}},
-		{"Complex", yamlDict{"A": yamlDict{"1": 1, "2": 2}, "B": 2, "C": 3}, yamlDict{"2": str("B"), "3": str("C"), fmt.Sprint(yamlDict{"1": 1, "2": 2}): str("A")}},
+		{"Base", yamlDict{"A": 1}, yamlDict{"1": String("A")}},
+		{"Multiple", yamlDict{"A": 1, "B": 2, "C": 1}, yamlDict{"1": yamlList{String("A"), String("C")}, "2": String("B")}},
+		{"List", yamlDict{"A": []int{1, 2, 3}, "B": 2, "C": 3}, yamlDict{"1": String("A"), "2": yamlList{String("A"), String("B")}, "3": yamlList{String("A"), String("C")}}},
+		{"Complex", yamlDict{"A": yamlDict{"1": 1, "2": 2}, "B": 2, "C": 3}, yamlDict{"2": String("B"), "3": String("C"), fmt.Sprint(yamlDict{"1": 1, "2": 2}): String("A")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1034,7 +1034,7 @@ func Test_YamlList_TypeName(t *testing.T) {
 	tests := []struct {
 		name string
 		l    yamlList
-		want str
+		want String
 	}{
 		// TODO: Add test cases.
 	}
@@ -1048,8 +1048,8 @@ func Test_YamlList_TypeName(t *testing.T) {
 }
 
 func Test_Yaml_TypeName(t *testing.T) {
-	t.Run("list", func(t *testing.T) { assert.Equal(t, yamlList{}.TypeName(), str("Yaml")) })
-	t.Run("dict", func(t *testing.T) { assert.Equal(t, yamlDict{}.TypeName(), str("Yaml")) })
+	t.Run("list", func(t *testing.T) { assert.Equal(t, yamlList{}.TypeName(), String("Yaml")) })
+	t.Run("dict", func(t *testing.T) { assert.Equal(t, yamlDict{}.TypeName(), String("Yaml")) })
 }
 
 func Test_Yaml_GetHelper(t *testing.T) {

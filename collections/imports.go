@@ -2,16 +2,18 @@ package collections
 
 import (
 	"github.com/coveooss/gotemplate/v3/errors"
-	"github.com/coveooss/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/stringclass"
 )
 
 // Functions imported from other modules
 var (
 	must      = errors.Must
-	ToStrings = strings.ToStrings
+	ToStrings = stringclass.ToStrings
 )
 
 type (
-	str      = strings.String
-	strArray = strings.StringArray
+	// String is imported from stringclass
+	String = stringclass.String
+	// StringArray is imported from stringclass
+	StringArray = stringclass.StringArray
 )

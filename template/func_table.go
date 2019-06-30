@@ -86,6 +86,7 @@ func (fi FuncInfo) getArguments(isMethod bool) string {
 	for i := iif(isMethod, 1, 0).(int); i < signature.NumIn(); i++ {
 		arg := strings.Replace(fmt.Sprint(signature.In(i)), "interface {}", "interface{}", -1)
 		arg = strings.Replace(arg, "collections.", "", -1)
+		arg = strings.Replace(arg, "stringclass.", "", -1)
 		var argName string
 		if i < len(fi.arguments) {
 			argName = fi.arguments[i]
@@ -118,6 +119,7 @@ func (fi FuncInfo) Result() string {
 	for i := 0; i < signature.NumOut(); i++ {
 		r := strings.Replace(fmt.Sprint(signature.Out(i)), "interface {}", "interface{}", -1)
 		r = strings.Replace(r, "collections.", "", -1)
+		r = strings.Replace(r, "stringclass.", "", -1)
 		outputs = append(outputs, r)
 	}
 	return strings.Join(outputs, ", ")

@@ -80,7 +80,7 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 		value = fmt.Sprintf("%q", value)
 		if indent != "" && strings.Contains(value, "\\n") {
 			// We unquote the value
-			unIndented := str(value[1 : len(value)-1])
+			unIndented := String(value[1 : len(value)-1])
 			// Then replace escaped characters, other escape chars are \a, \b, \f and \v are not managed
 			unIndented = unIndented.Replace(`\n`, "\n")
 			unIndented = unIndented.Replace(`\\`, "\\")
@@ -123,7 +123,7 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 			newLine = newLine || strings.Contains(results[i], "\n")
 		}
 		if totalLength > 60 && indent != "" || newLine {
-			result = fmt.Sprintf("[\n%s,\n]", str(",\n").Join(results).Indent(prefix+indent))
+			result = fmt.Sprintf("[\n%s,\n]", String(",\n").Join(results).Indent(prefix+indent))
 		} else {
 			result = fmt.Sprintf("[%s]", strings.Join(results, ifIndent(", ", ",")))
 		}
@@ -209,7 +209,7 @@ func marshalHCL(value interface{}, fullHcl, head bool, prefix, indent string) (r
 			break
 		}
 
-		result = fmt.Sprintf("{\n%s\n}", str("\n").Join(items).Indent(prefix+indent))
+		result = fmt.Sprintf("{\n%s\n}", String("\n").Join(items).Indent(prefix+indent))
 
 	default:
 		debug.PrintStack()

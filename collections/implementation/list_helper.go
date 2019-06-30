@@ -61,10 +61,10 @@ func (lh ListHelper) GetStrings(list baseIList) []string {
 }
 
 // GetStringArray returns a StringArray representation of the list.
-func (lh ListHelper) GetStringArray(list baseIList) strArray {
-	result := make(strArray, list.Len())
+func (lh ListHelper) GetStringArray(list baseIList) StringArray {
+	result := make(StringArray, list.Len())
 	for i := 0; i < list.Len(); i++ {
-		result[i] = str(fmt.Sprint(list.Get(i)))
+		result[i] = String(fmt.Sprint(list.Get(i)))
 	}
 	return result
 }

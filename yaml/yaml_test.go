@@ -5,10 +5,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/coveooss/gotemplate/v3/strings"
+	"github.com/coveooss/gotemplate/v3/stringclass"
 )
 
-var lts = strings.LeftTrimmedString
+var lts = stringclass.LeftTrimmedString
 
 func Test_list_String(t *testing.T) {
 	t.Parallel()

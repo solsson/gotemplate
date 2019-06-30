@@ -13,7 +13,7 @@ GetHelpers() IDictionaryHelper, IListHelper
 GetKeys() IGenericList
 GetValues() IGenericList
 Has(...interface{}) bool
-KeysAsString() strings.StringArray
+KeysAsString() StringArray
 Len() int
 Merge(IDictionary, ...IDictionary) IDictionary
 Native() interface{}
@@ -23,5 +23,5 @@ PrettyPrint() string
 Set(interface{}, interface{}) IDictionary
 String() string
 Transpose() IDictionary
-TypeName() strings.String
+TypeName() String
 ```

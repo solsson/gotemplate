@@ -224,7 +224,7 @@ func yaml(yaml interface{}, context ...interface{}) interface{}, error
 
 ```go
 // Returns a String class object that allows invoking standard string operations as method.
-func String(value interface{}) strings.String
+func String(value interface{}) String
 ```
 
 ```go
